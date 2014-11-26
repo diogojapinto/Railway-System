@@ -1,15 +1,15 @@
-class Railway
+class TrackElement
 types
 -- TODO Define types here
 values
 -- TODO Define values here
 instance variables
-	trackElements: seq of TrackElement := [];
-	trains: set of Train := {};
+	protected nextClockwise: TrackElement := new TrackElement();
+	protected nextCounterClockwise: TrackElement := new TrackElement();
 operations
 -- TODO Define operations here
 functions
 -- TODO Define functiones here
 traces
 -- TODO Define Combinatorial Test Traces here
-end Railway
+end TrackElement

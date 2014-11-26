@@ -1,12 +1,16 @@
-class Station
+class Station is subclass of TrackElement
 types
 -- TODO Define types here
 values
 -- TODO Define values here
 instance variables
--- TODO Define instance variables here
+	clockwiseTrain: [Train] := nil;
+	counterClockwiseTrain: [Train] := nil;
+	
+	inv isofclass(Block, nextClockwise);
+	inv isofclass(Block, nextCounterClockwise);
 operations
--- TODO Define operations here
+	public getSemaphor() 
 functions
 -- TODO Define functiones here
 traces
