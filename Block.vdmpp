@@ -1,17 +1,11 @@
 class Block is subclass of TrackElement
 types
-	public semaphoreLight = <GREEN> | <YELLOW> | <RED>
 -- TODO Define types here
 values
 -- TODO Define values here
 instance variables
-	train: [Train] := nil;
-	semaphorClockwise: semaphoreLight := <RED>;
-	semaphorCounterClockwise: semaphoreLight := <RED>;
-	
-	inv nextClockwise
+	train: [Railway`Train] := nil;
 operations
--- TODO Define operations here
 functions
 -- TODO Define functiones here
 traces

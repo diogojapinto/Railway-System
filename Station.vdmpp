@@ -4,13 +4,17 @@ types
 values
 -- TODO Define values here
 instance variables
-	clockwiseTrain: [Train] := nil;
-	counterClockwiseTrain: [Train] := nil;
+	clockwiseTrain: [Railway`Train] := nil;
+	counterClockwiseTrain: [Railway`Train] := nil;
 	
+	-- previous and next elements must be Block
 	inv isofclass(Block, nextClockwise);
 	inv isofclass(Block, nextCounterClockwise);
+	
+	-- verify trains directions
+	inv clockwiseTrain <> nil => rng clockwiseTrain = <CLOCKWISE>;
+	inv counterClockwiseTrain <> nil => rng counterClockwiseTrain = <COUNTER_CLOCKWISE>;
 operations
-	public getSemaphor() 
 functions
 -- TODO Define functiones here
 traces

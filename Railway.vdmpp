@@ -1,13 +1,50 @@
 class Railway
 types
--- TODO Define types here
+	public Direction = <CLOCKWISE> | <COUNTER_CLOCKWISE>;
+	public Train = map token to Direction;
 values
 -- TODO Define values here
 instance variables
-	trackElements: seq of TrackElement := [];
-	trains: set of Train := {};
+	static trainCounter: nat := 0;
+	
+	private isClosed: bool := false;
+	
+	private trackElements: seq of TrackElement := [];
+	private trains: set of Train := {};
 operations
--- TODO Define operations here
+
+	--------------------
+	--   Build ops    --
+	--------------------
+	
+	public appendTrackElement: TrackElement ==> ()
+	appendTrackElement(newTrackElem) == (
+		-- set elements ordering
+		newTrackElem.nextCounterClockwise := hd reverse trackElements;
+		trackElements(len trackElements - 1).nextClockwise := newTrackElem;
+		
+		-- add to sequence
+		trackElements := trackElements ^ [newTrackElem];
+	)
+	post
+		len trackElements = len trackElements~ + 1 and
+		trackElements(len trackElements - 2).nextCounterClockwise = trackElements(len trackElements - 2).nextClockwise;
+		
+	public closeTrack: () ==> seq of TrackElement
+	closeTrack() == (
+		trackElements(len trackElements - 1).nextClockwise := trackElements(0);
+		return trackElements;
+	);
+	
+	public placeTrain: Direction ==> ()
+	placeTrain(dir) == (
+		dcl newTrain: Train := {mk_token(trainCounter) |-> dir};
+		trainCounter := trainCounter + 1;
+		
+		-- TODO
+		
+	);
+	
 functions
 -- TODO Define functiones here
 traces

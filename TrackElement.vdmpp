@@ -1,15 +1,18 @@
 class TrackElement
 types
--- TODO Define types here
+	public SemaphoreLight = <GREEN> | <YELLOW> | <RED>;
 values
--- TODO Define values here
 instance variables
-	protected nextClockwise: TrackElement := new TrackElement();
-	protected nextCounterClockwise: TrackElement := new TrackElement();
+	public nextClockwise: TrackElement;
+	public nextCounterClockwise: TrackElement;
+	
+	public semaphoreClockwise: SemaphoreLight := <RED>;
+	public semaphoreCounterClockwise: SemaphoreLight := <RED>;
+	
+	inv nextClockwise.semaphoreClockwise = <RED> => semaphoreClockwise <> <GREEN>;
+	inv nextCounterClockwise.semaphoreCounterClockwise = <RED> => semaphoreCounterClockwise <> <GREEN>;
 operations
--- TODO Define operations here
+		
 functions
--- TODO Define functiones here
 traces
--- TODO Define Combinatorial Test Traces here
 end TrackElement
