@@ -5,11 +5,11 @@ types
 									dir : Direction;
 values
 instance variables
-	static trainCounter: nat := 0;
+	public static trainCounter: nat := 0;
 	
 	private isClosed: bool := false;
 	
-	private trackElements: seq of TrackElement := [];
+	public trackElements: seq of TrackElement := [];
 	private trains: set of Train := {};
 operations
 
@@ -28,6 +28,9 @@ operations
 		-- add to sequence
 		trackElements := trackElements ^ [newTrackElem];
 	)
+	pre
+		if isofclass(Station, trackElements(len trackElements - 1)) then not isofclass(Station, newTrackElem)
+		else	true
 	post
 		len trackElements = len trackElements~ + 1 and
 		trackElements(len trackElements - 2).nextCounterClockwise = trackElements(len trackElements - 2).nextClockwise;

@@ -1,0 +1,36 @@
+class RailwaySystemTest
+	instance variables
+		railWay : Railway := new Railway();
+		b1 : TrackElement := new Block();
+		b2 : TrackElement := new Block();
+		b3 : TrackElement := new Block();
+		b4 : TrackElement := new Block();
+		s1 : TrackElement := new Station();
+		s2 : TrackElement := new Station();
+		
+	operations
+		private assertTrue: bool ==> ()
+    	assertTrue(cond) == return
+    	pre cond;
+    	
+		private assertFalse: bool ==> ()
+    	assertFalse(cond) == return
+    	pre not cond;
+    	
+    private testValidRailway: () ==> ()
+    testValidRailway() ==
+    (
+    	railWay.appendTrackElement(b1);
+    	railWay.appendTrackElement(b4);
+    	railWay.appendTrackElement(s1);
+    	railWay.appendTrackElement(s2);
+    	assertFalse(len railWay.trackElements = 4);
+    );
+    
+    public static main: () ==> ()
+    main() ==
+    (
+      new RailwaySystemTest().testValidRailway();               
+    );
+    
+end RailwaySystemTest
