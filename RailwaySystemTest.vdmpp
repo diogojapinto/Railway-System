@@ -17,13 +17,20 @@ class RailwaySystemTest
     	assertFalse(cond) == return
     	pre not cond;
     	
-    --private testValidRailWay: () ==> ()
-    --testValidRailway() ==
-    --(
-    --	railWay.appendTrackElement(b1);
-    --	railWay.appendTrackElement(b4);
-    --	railWay.appendTrackElement(s1);
-    --	railWay.appendTrackElement(s2);
-    --);
+    private testValidRailway: () ==> ()
+    testValidRailway() ==
+    (
+    	railWay.appendTrackElement(b1);
+    	railWay.appendTrackElement(b4);
+    	railWay.appendTrackElement(s1);
+    	railWay.appendTrackElement(s2);
+    	assertFalse(len railWay.trackElements = 4);
+    );
+    
+    public static main: () ==> ()
+    main() ==
+    (
+      new RailwaySystemTest().testValidRailway();               
+    );
     
 end RailwaySystemTest

@@ -6,11 +6,11 @@ types
 values
 -- TODO Define values here
 instance variables
-	static trainCounter: nat := 0;
+	public static trainCounter: nat := 0;
 	
 	private isClosed: bool := false;
 	
-	private trackElements: seq of TrackElement := [];
+	public trackElements: seq of TrackElement := [];
 	private trains: set of Train := {};
 operations
 
