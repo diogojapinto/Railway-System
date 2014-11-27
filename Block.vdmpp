@@ -1,8 +1,6 @@
 class Block is subclass of TrackElement
 types
--- TODO Define types here
 values
--- TODO Define values here
 instance variables
 	train: [Railway`Train] := nil;
 operations
@@ -15,7 +13,5 @@ operations
 	post
 		train <> nil;
 functions
--- TODO Define functiones here
 traces
--- TODO Define Combinatorial Test Traces here
 end Block

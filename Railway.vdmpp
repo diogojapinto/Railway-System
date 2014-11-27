@@ -4,7 +4,6 @@ types
 	public Train :: id  : token
 									dir : Direction;
 values
--- TODO Define values here
 instance variables
 	static trainCounter: nat := 0;
 	
@@ -48,7 +47,5 @@ operations
 	);
 	
 functions
--- TODO Define functiones here
 traces
--- TODO Define Combinatorial Test Traces here
 end Railway

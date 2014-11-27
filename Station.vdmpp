@@ -1,8 +1,6 @@
 class Station is subclass of TrackElement
 types
--- TODO Define types here
 values
--- TODO Define values here
 instance variables
 	clockwiseTrain: [Railway`Train] := nil;
 	counterClockwiseTrain: [Railway`Train] := nil;
@@ -20,7 +18,5 @@ operations
 		if train.dir = <CLOCKWISE> then clockwiseTrain := train
 		else counterClockwiseTrain := train;
 functions
--- TODO Define functiones here
 traces
--- TODO Define Combinatorial Test Traces here
 end Station
