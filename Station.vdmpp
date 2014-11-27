@@ -12,9 +12,12 @@ instance variables
 	inv isofclass(Block, nextCounterClockwise);
 	
 	-- verify trains directions
-	inv clockwiseTrain <> nil => rng clockwiseTrain = <CLOCKWISE>;
-	inv counterClockwiseTrain <> nil => rng counterClockwiseTrain = <COUNTER_CLOCKWISE>;
+	inv clockwiseTrain <> nil => clockwiseTrain.dir = <CLOCKWISE>;
+	inv counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>;
 operations
+	public placeTrain: Railway`Train ==> ()
+	placeTrain(train) ==
+		is subclass responsibility;
 functions
 -- TODO Define functiones here
 traces

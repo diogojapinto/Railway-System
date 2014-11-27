@@ -12,7 +12,9 @@ instance variables
 	inv nextClockwise.semaphoreClockwise = <RED> => semaphoreClockwise <> <GREEN>;
 	inv nextCounterClockwise.semaphoreCounterClockwise = <RED> => semaphoreCounterClockwise <> <GREEN>;
 operations
-		
+	public placeTrain: Railway`Train ==> ()
+	placeTrain(train) ==
+		is subclass responsibility;
 functions
 traces
 end TrackElement

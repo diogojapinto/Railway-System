@@ -6,6 +6,14 @@ values
 instance variables
 	train: [Railway`Train] := nil;
 operations
+	public placeTrain: Railway`Train ==> ()
+	placeTrain(newTrain) == (
+		train := newTrain;
+	)
+	pre
+		train = nil
+	post
+		train <> nil;
 functions
 -- TODO Define functiones here
 traces
