@@ -39,13 +39,12 @@ operations
 		return trackElements;
 	);
 	
-	public placeTrain: Direction ==> ()
-	placeTrain(dir) == (
+	public placeTrain: nat * Direction ==> ()
+	placeTrain(index, dir) == (
 		dcl newTrain: Train := mk_Train(mk_token(trainCounter), dir);
 		trainCounter := trainCounter + 1;
 		
-		
-		
+		trackElements(index).placeTrain(newTrain);
 	);
 	
 functions

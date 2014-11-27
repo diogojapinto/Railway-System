@@ -17,7 +17,8 @@ instance variables
 operations
 	public placeTrain: Railway`Train ==> ()
 	placeTrain(train) ==
-		is subclass responsibility;
+		if train.dir = <CLOCKWISE> then clockwiseTrain := train
+		else counterClockwiseTrain := train;
 functions
 -- TODO Define functiones here
 traces
