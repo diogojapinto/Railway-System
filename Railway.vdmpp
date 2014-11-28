@@ -19,27 +19,32 @@ operations
 	
 	public appendTrackElement: TrackElement ==> ()
 	appendTrackElement(newTrackElem) == (
-		if len trackElements <> 0 then (
+		if len trackElements > 0 then (
 			-- set elements ordering
-			newTrackElem.nextCounterClockwise := hd reverse trackElements;
-			trackElements(len trackElements - 1).nextClockwise := newTrackElem;
+			newTrackElem.nextCounterClockwise := trackElements(len trackElements);
+			trackElements(len trackElements).nextClockwise := newTrackElem;
 		);
 		
 		-- add to sequence
 		trackElements := trackElements ^ [newTrackElem];
 	)
 	pre
-		if isofclass(Station, trackElements(len trackElements - 1)) then not isofclass(Station, newTrackElem)
-		else	true
+		len trackElements > 0 and isofclass(Station, newTrackElem) => not isofclass(Station, trackElements(len trackElements))
 	post
-		len trackElements = len trackElements~ + 1 and
-		trackElements(len trackElements - 2).nextCounterClockwise = trackElements(len trackElements - 2).nextClockwise;
+		len trackElements = (len trackElements~ + 1) and
+		len trackElements > 1 => trackElements(len trackElements - 1).nextClockwise = trackElements(len trackElements) and
+		len trackElements > 1 => trackElements(len trackElements).nextCounterClockwise = trackElements(len trackElements - 1);
 		
 	public closeTrack: () ==> seq of TrackElement
 	closeTrack() == (
-		trackElements(len trackElements - 1).nextClockwise := trackElements(0);
+		trackElements(len trackElements).nextClockwise := trackElements(1);
+		trackElements(1).nextCounterClockwise := trackElements(len trackElements);
+		isClosed := true;
 		return trackElements;
-	);
+	)
+	post
+		trackElements(1).nextCounterClockwise = trackElements(len trackElements) and
+		trackElements(len trackElements).nextClockwise = trackElements(1);
 	
 	public placeTrain: nat * Direction ==> ()
 	placeTrain(index, dir) == (

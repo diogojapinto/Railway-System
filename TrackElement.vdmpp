@@ -3,18 +3,29 @@ types
 	public SemaphoreLight = <GREEN> | <YELLOW> | <RED>;
 values
 instance variables
-	public nextClockwise: TrackElement;
-	public nextCounterClockwise: TrackElement;
+	public nextClockwise: [TrackElement] := nil;
+	public nextCounterClockwise: [TrackElement] := nil;
 	
-	public semaphoreClockwise: SemaphoreLight := <RED>;
-	public semaphoreCounterClockwise: SemaphoreLight := <RED>;
+	public semaphoreClockwise: SemaphoreLight := <GREEN>;
+	public semaphoreCounterClockwise: SemaphoreLight := <GREEN>;
 	
-	inv nextClockwise.semaphoreClockwise = <RED> => semaphoreClockwise <> <GREEN>;
-	inv nextCounterClockwise.semaphoreCounterClockwise = <RED> => semaphoreCounterClockwise <> <GREEN>;
 operations
 	public placeTrain: Railway`Train ==> ()
 	placeTrain(train) ==
 		is subclass responsibility;
+		
+	public setCSemaphore: SemaphoreLight ==> ()
+	setCSemaphore(light) == (
+		semaphoreClockwise := light;
+	)
+	pre light = <GREEN> => nextClockwise.semaphoreClockwise <> <RED>;
+	
+	
+	public setCCSemaphore: SemaphoreLight ==> ()
+	setCCSemaphore(light) == (
+		semaphoreCounterClockwise := light;
+	)
+	pre light = <GREEN> => nextCounterClockwise.semaphoreCounterClockwise <> <RED>;
 functions
 traces
 end TrackElement

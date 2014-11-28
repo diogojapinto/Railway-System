@@ -5,18 +5,24 @@ instance variables
 	clockwiseTrain: [Railway`Train] := nil;
 	counterClockwiseTrain: [Railway`Train] := nil;
 	
-	-- previous and next elements must be Block
-	inv isofclass(Block, nextClockwise);
-	inv isofclass(Block, nextCounterClockwise);
-	
-	-- verify trains directions
-	inv clockwiseTrain <> nil => clockwiseTrain.dir = <CLOCKWISE>;
-	inv counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>;
 operations
 	public placeTrain: Railway`Train ==> ()
-	placeTrain(train) ==
-		if train.dir = <CLOCKWISE> then clockwiseTrain := train
-		else counterClockwiseTrain := train;
+	placeTrain(train) == (
+		if train.dir = <CLOCKWISE> then (
+			clockwiseTrain := train;
+			nextClockwise.setCSemaphore(<YELLOW>);
+			setCSemaphore(<RED>);
+		)
+		else (
+			counterClockwiseTrain := train;
+			nextClockwise.setCCSemaphore(<YELLOW>);
+			setCCSemaphore(<RED>);
+		)
+	)
+	post
+		(clockwiseTrain <> nil => clockwiseTrain.dir = <COUNTER_CLOCKWISE>)
+		and (counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>)
+		
 functions
 traces
 end Station

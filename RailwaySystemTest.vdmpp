@@ -20,17 +20,21 @@ class RailwaySystemTest
     private testValidRailway: () ==> ()
     testValidRailway() ==
     (
+    	dcl tracks: seq of TrackElement;
     	railWay.appendTrackElement(b1);
-    	railWay.appendTrackElement(b4);
     	railWay.appendTrackElement(s1);
+    	railWay.appendTrackElement(b4);
     	railWay.appendTrackElement(s2);
-    	assertFalse(len railWay.trackElements = 4);
+    	tracks := railWay.closeTrack();
+    	assertTrue(len railWay.trackElements = 4);
+    	assertTrue(tracks = [b1, s1, b4, s2]);
     );
     
     public static main: () ==> ()
     main() ==
     (
-      new RailwaySystemTest().testValidRailway();               
+      dcl tester: RailwaySystemTest := new RailwaySystemTest();
+      tester.testValidRailway();
     );
     
 end RailwaySystemTest
