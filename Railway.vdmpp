@@ -81,18 +81,18 @@ operations
 	public askToLeaveStation: Train ==> bool
 	askToLeaveStation(train) == (
 		dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
-		dcl remainingTrains: set of Train := {t | t in set trains & t <> train};
+		dcl remainingTrains: set of Train := trains \ {train};
 		if train.dir = <CLOCKWISE> then (
 			if not station.nextClockwise.hasAnyTrain() then
 				return false
 			else
-				moveTrain(station, station.nextClockwise);
+				moveTrain(train, station, station.nextClockwise);
 		)
 		else (
 			if not station.nextCounterClockwise.hasAnyTrain() then
 				return false
 			else
-				moveTrain(station, station.nextCounterClockwise);
+				moveTrain(train, station, station.nextCounterClockwise);
 		);
 		advanceIter(remainingTrains);
 		return true;
@@ -103,21 +103,34 @@ operations
 	
 	public advanceIter: set of Train ==> ()
 	advanceIter(mvTrains) == (
-		for
+		dcl movedTrains: set of Train := {};
+		for all train in set mvTrains do (
+			dcl trackElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
+			if isofclass(Station, trackElem) then
+				movedTrains:= movedTrains union {train}
+			else
+				if train.dir = <CLOCKWISE> then (
+					-- TODO
+				)
+				else (
+					-- TODO
+				)									
+		)
+		advanceIter(mvTrains \ movedTrains);
 	)
 	pre
 		isClosed;
 		
-	private moveTrain: Station * Block ==> ()
-	moveTrain(src, dst) ==
+	private moveTrain: Train * Station * Block ==> ()
+	moveTrain(train, src, dst) ==
 		is not yet specified;
 		
-	private moveTrain: Block * Station ==> ()
-	moveTrain(src, dst) ==
+	private moveTrain: Train * Block * Station ==> ()
+	moveTrain(train, src, dst) ==
 		is not yet specified;
 		
-	private moveTrain: Block * Block ==> ()
-	moveTrain(src, dst) ==
+	private moveTrain: Train * Block * Block ==> ()
+	moveTrain(train, src, dst) ==
 		is not yet specified
 	pre
 		not dst.hasAnyTrain() and
