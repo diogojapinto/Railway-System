@@ -116,7 +116,10 @@ operations
 					-- TODO
 				)									
 		)
-		advanceIter(mvTrains \ movedTrains);
+		if card movedTrains = 0 then
+			return
+		else
+			advanceIter(mvTrains \ movedTrains);
 	)
 	pre
 		isClosed;
