@@ -19,9 +19,31 @@ operations
 		train <> nil;
 		
 	
-	public hasTrain: () ==> bool
-	hasTrain() ==
+	public hasAnyTrain: () ==> bool
+	hasAnyTrain() ==
 		return train <> nil;
+		
+	public hasTrain: Railway`Train ==> bool
+	hasTrain(o_train) ==
+		return train = o_train;
+	
+	public initSemaphores: () ==> ()
+	initSemaphores() ==
+		if hasAnyTrain() then (
+			setCSemaphore(<RED>);
+			setCCSemaphore(<RED>);
+		)
+		else (
+			if nextClockwise.hasAnyTrain() or isofclass(Station, nextClockWise) then
+				setCSemaphore(<YELLOW>)
+			else 
+				setCSemaphore(<GREEN>);
+				
+			if nextCounterClockwise.hasAnyTrain() or isofclass(Station, nextCounterClockWise) then
+				setCCSemaphore(<YELLOW>)
+			else 
+				setCCSemaphore(<GREEN>)
+		)
 		
 functions
 traces

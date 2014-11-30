@@ -20,6 +20,7 @@ operations
 	--   Build ops    --
 	--------------------
 	
+	----- adds an element to the end of the current track -----
 	public appendTrackElement: TrackElement ==> ()
 	appendTrackElement(newTrackElem) == (
 		if len trackElements > 0 then (
@@ -32,19 +33,25 @@ operations
 		trackElements := trackElements ^ [newTrackElem];
 	)
 	pre
-		len trackElements > 0 and isofclass(Station, newTrackElem) => not isofclass(Station, trackElements(len trackElements))
+		len trackElements > 0 and isofclass(Station, newTrackElem) => not isofclass(Station, trackElements(len trackElements)) and
+		isClosed = false
 	post
 		len trackElements = (len trackElements~ + 1) and
 		len trackElements > 1 => trackElements(len trackElements - 1).nextClockwise = trackElements(len trackElements) and
 		len trackElements > 1 => trackElements(len trackElements).nextCounterClockwise = trackElements(len trackElements - 1);
 		
+	
+	----- terminates the construction of the track -----
 	public closeTrack: () ==> seq of TrackElement
 	closeTrack() == (
 		trackElements(len trackElements).nextClockwise := trackElements(1);
 		trackElements(1).nextCounterClockwise := trackElements(len trackElements);
+		initSemaphores();
 		isClosed := true;
 		return trackElements;
 	)
+	pre
+		isClosed = false
 	post
 		trackElements(1).nextCounterClockwise = trackElements(len trackElements) and
 		trackElements(len trackElements).nextClockwise = trackElements(1);
@@ -62,32 +69,36 @@ operations
 	);
 	
 	
-	--private updateSemaphores: () ==> ()
-	--updateSemaphores() == (
-	--	for i = 1 to len trackElements + 1 do (
-	--		dcl elem: TrackElement := trackElements(i);
-	--		if isofclass(Block, elem) then
-	--			
-	--		else -- isofclass(Station, elem)
-	--		
-	--	);
-	--);
+	----- initializes all semaphores -----
+	private initSemaphores: () ==> ()
+	initSemaphores() == (
+		for all elem in set trackElements do (
+			elem.initSemaphores()
+		)
+	)
+	pre isClosed = false;
 	
-	public askPermissionToLeaveStation: Train ==> bool
-	askPermissionToLeaveStation(train) == (
-		dcl station: Station := 
-	) 
+	----- initializes all semaphores -----
+	public askToLeaveStation: Train ==> bool
+	askToLeaveStation(train) == (
+		dcl station: Station := iota s in set trackElements & s.hasTrain(train);
+		dcl remainingTrains: set of Train := {t | t in set trains & t <> train};
+		if train.dir = <CLOCKWISE> then
+			if not moveTrain(station, station.nextClockwise) then
+				return false
+		else if not moveTrain(station, station.nextCounterClockwise) then
+				return false;
+		advanceIter(remainingTrains);
+		return true;
+	)
 	pre
+		exists s in set trackElements & isofclass(Station, s) and s.hasTrain(train);
 		
 	
-	public advanceIter: () ==> ()
-	advanceIter() ==
-		for all station in set {s | s in set elems trackElements & isofclass(Station, s)} do (
-			station.setCCSemaphore(<GREEN>);
-			station.setCSemaphore(<GREEN>);
-		);
-		while not trainsAtStation() do (
-		)
+	public advanceIter: set of Train ==> ()
+	advanceIter(trains) == (
+		
+	)
 	pre
 		isClosed;
 	

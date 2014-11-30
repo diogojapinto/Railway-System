@@ -31,13 +31,38 @@ operations
 		(clockwiseTrain <> nil => clockwiseTrain.dir = <COUNTER_CLOCKWISE>)
 		and (counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>);
 		
-	public hasTrain: () ==> bool
-	hasTrain() ==
+	public hasAnyTrain: () ==> bool
+	hasAnyTrain() ==
 		return clockwiseTrain <> nil or clockwiseTrain <> nil;
 		
-	public hasTrain: () ==> bool
-	hasTrain() ==
-		return clockwiseTrain <> nil or clockwiseTrain <> nil;
+	public hasTrain: Railway`Train ==> bool
+	hasTrain(train) ==
+		return clockwiseTrain = train or clockwiseTrain = train;
+		
+	public hasCTrain: () ==> bool
+	hasCTrain() ==
+		return clockwiseTrain <> nil;
+		
+	public hasCCTrain: () ==> bool
+	hasCCTrain() ==
+		return counterClockwiseTrain <> nil;
+		
+	public initSemaphores: () ==> ()
+	initSemaphores() == (
+		if hasCTrain() then
+				setCSemaphore(<RED>)
+		else if nextClockwise.hasAnyTrain() then
+				setCSemaphore(<YELLOW>)
+		else
+				setCSemaphore(<RED>);
+		
+		if hasCCTrain() then
+				setCCSemaphore(<RED>)
+		else if nextCounterClockwise.hasAnyTrain() then
+				setCCSemaphore(<YELLOW>)
+		else
+				setCCSemaphore(<RED>);
+		)
 		
 functions
 traces

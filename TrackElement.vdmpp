@@ -12,9 +12,15 @@ operations
 	placeTrain(train) ==
 		is subclass responsibility;
 		
-	-- return true if has train
-	public hasTrain: () ==> bool
-	hasTrain() ==
+	-- return true if any has train
+	public hasAnyTrain: () ==> bool
+	hasAnyTrain() ==
+		is subclass responsibility;
+		
+	
+	-- return true if has the specified train
+	public hasTrain: Railway`Train ==> bool
+	hasTrain(train) ==
 		is subclass responsibility;
 		
 	-- return the light of the clockwise semaphore
@@ -31,6 +37,9 @@ operations
 	)
 	pre light = <GREEN> => nextCounterClockwise.semaphoreCounterClockwise <> <RED>;
 	
+	public initSemaphores: () ==> ()
+	initSemaphores() ==
+		is subclass responsibility;
 	
 functions
 traces
