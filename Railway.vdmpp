@@ -1,8 +1,9 @@
 class Railway
 types
 	public Direction = <CLOCKWISE> | <COUNTER_CLOCKWISE>;
-	public Train :: id  : token
-									dir : Direction;
+	public Train :: id          : token
+									isAtStation : bool
+									dir         : Direction;
 values
 instance variables
 	public static trainCounter: nat := 0;
@@ -10,7 +11,9 @@ instance variables
 	private isClosed: bool := false;
 	
 	public trackElements: seq of TrackElement := [];
-	private trains: set of Train := {};
+	public trains: set of Train := {};
+	
+	inv trainCounter = card trains;
 operations
 
 	--------------------
@@ -48,12 +51,40 @@ operations
 	
 	public placeTrain: nat * Direction ==> ()
 	placeTrain(index, dir) == (
-		dcl newTrain: Train := mk_Train(mk_token(trainCounter), dir);
-		trainCounter := trainCounter + 1;
+		dcl newTrain: Train := mk_Train(mk_token(trainCounter), false, dir);
+			dcl coiso: Block := trackElements(1);
+		atomic(
+			trains := trains union {newTrain};
+			trainCounter := trainCounter + 1;
+		);
 		
 		trackElements(index).placeTrain(newTrain);
 	);
 	
+	
+	--private updateSemaphores: () ==> ()
+	--updateSemaphores() == (
+	--	for i = 1 to len trackElements + 1 do (
+	--		dcl elem: TrackElement := trackElements(i);
+	--		if isofclass(Block, elem) then
+	--			
+	--		else -- isofclass(Station, elem)
+	--		
+	--	);
+	--);
+	
+	public advanceIter: () ==> ()
+	advanceIter() ==
+		for all station in set {s | s in set elems trackElements & isofclass(Station, s)} do (
+			station.setCCSemaphore(<GREEN>);
+			station.setCSemaphore(<GREEN>);
+		);
+		while not trainsAtStation() do (
+		)
+	pre
+		isClosed;
+	
 functions
+	
 traces
 end Railway

@@ -2,8 +2,15 @@ class Station is subclass of TrackElement
 types
 values
 instance variables
+	-- only one train in each parallel block
 	clockwiseTrain: [Railway`Train] := nil;
 	counterClockwiseTrain: [Railway`Train] := nil;
+	
+	-- must be followed and preceded by Blocks
+	inv nextClockwise <> nil => isofclass(Block, nextClockwise);
+	inv nextCounterClockwise <> nil => isofclass(Block, nextCounterClockwise)
+		-- previous block must not have GREEN light
+		and nextCounterClockwise.semaphoreClockwise <> <GREEN>;
 	
 operations
 	public placeTrain: Railway`Train ==> ()
@@ -20,8 +27,17 @@ operations
 		)
 	)
 	post
+		-- trains circulate through the left
 		(clockwiseTrain <> nil => clockwiseTrain.dir = <COUNTER_CLOCKWISE>)
-		and (counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>)
+		and (counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>);
+		
+	public hasTrain: () ==> bool
+	hasTrain() ==
+		return clockwiseTrain <> nil or clockwiseTrain <> nil;
+		
+	public hasTrain: () ==> bool
+	hasTrain() ==
+		return clockwiseTrain <> nil or clockwiseTrain <> nil;
 		
 functions
 traces

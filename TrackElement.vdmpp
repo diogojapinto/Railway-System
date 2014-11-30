@@ -6,26 +6,32 @@ instance variables
 	public nextClockwise: [TrackElement] := nil;
 	public nextCounterClockwise: [TrackElement] := nil;
 	
-	public semaphoreClockwise: SemaphoreLight := <GREEN>;
-	public semaphoreCounterClockwise: SemaphoreLight := <GREEN>;
-	
 operations
+	-- places a train in the the corresponding block
 	public placeTrain: Railway`Train ==> ()
 	placeTrain(train) ==
 		is subclass responsibility;
 		
+	-- return true if has train
+	public hasTrain: () ==> bool
+	hasTrain() ==
+		is subclass responsibility;
+		
+	-- return the light of the clockwise semaphore
 	public setCSemaphore: SemaphoreLight ==> ()
 	setCSemaphore(light) == (
 		semaphoreClockwise := light;
 	)
 	pre light = <GREEN> => nextClockwise.semaphoreClockwise <> <RED>;
 	
-	
+	-- return the light of the counter-clockwise semaphore
 	public setCCSemaphore: SemaphoreLight ==> ()
 	setCCSemaphore(light) == (
 		semaphoreCounterClockwise := light;
 	)
 	pre light = <GREEN> => nextCounterClockwise.semaphoreCounterClockwise <> <RED>;
+	
+	
 functions
 traces
 end TrackElement

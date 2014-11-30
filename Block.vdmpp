@@ -1,9 +1,14 @@
 class Block is subclass of TrackElement
 types
+	public SemaphoreLight = <GREEN> | <YELLOW> | <RED>;
 values
 instance variables
 	train: [Railway`Train] := nil;
+	
+	public semaphoreClockwise: SemaphoreLight := <RED>;
+	public semaphoreCounterClockwise: SemaphoreLight := <RED>;
 operations
+	-- only one train per block
 	public placeTrain: Railway`Train ==> ()
 	placeTrain(newTrain) == (
 		train := newTrain;
@@ -12,6 +17,12 @@ operations
 		train = nil
 	post
 		train <> nil;
+		
+	
+	public hasTrain: () ==> bool
+	hasTrain() ==
+		return train <> nil;
+		
 functions
 traces
 end Block
