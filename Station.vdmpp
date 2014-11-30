@@ -37,7 +37,7 @@ operations
 		
 	public hasTrain: Railway`Train ==> bool
 	hasTrain(train) ==
-		return clockwiseTrain = train or clockwiseTrain = train;
+		return clockwiseTrain = train or counterClockwiseTrain = train;
 		
 	public hasCTrain: () ==> bool
 	hasCTrain() ==
@@ -64,6 +64,6 @@ operations
 				setCCSemaphore(<RED>);
 		)
 		
-functions
+functions		
 traces
 end Station

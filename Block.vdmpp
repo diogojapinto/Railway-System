@@ -1,12 +1,8 @@
 class Block is subclass of TrackElement
 types
-	public SemaphoreLight = <GREEN> | <YELLOW> | <RED>;
 values
 instance variables
 	train: [Railway`Train] := nil;
-	
-	public semaphoreClockwise: SemaphoreLight := <RED>;
-	public semaphoreCounterClockwise: SemaphoreLight := <RED>;
 operations
 	-- only one train per block
 	public placeTrain: Railway`Train ==> ()
@@ -34,12 +30,12 @@ operations
 			setCCSemaphore(<RED>);
 		)
 		else (
-			if nextClockwise.hasAnyTrain() or isofclass(Station, nextClockWise) then
+			if nextClockwise.hasAnyTrain() or isofclass(Station, nextClockwise) then
 				setCSemaphore(<YELLOW>)
 			else 
 				setCSemaphore(<GREEN>);
 				
-			if nextCounterClockwise.hasAnyTrain() or isofclass(Station, nextCounterClockWise) then
+			if nextCounterClockwise.hasAnyTrain() or isofclass(Station, nextCounterClockwise) then
 				setCCSemaphore(<YELLOW>)
 			else 
 				setCCSemaphore(<GREEN>)

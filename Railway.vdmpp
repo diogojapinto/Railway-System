@@ -59,7 +59,6 @@ operations
 	public placeTrain: nat * Direction ==> ()
 	placeTrain(index, dir) == (
 		dcl newTrain: Train := mk_Train(mk_token(trainCounter), false, dir);
-			dcl coiso: Block := trackElements(1);
 		atomic(
 			trains := trains union {newTrain};
 			trainCounter := trainCounter + 1;
@@ -72,7 +71,7 @@ operations
 	----- initializes all semaphores -----
 	private initSemaphores: () ==> ()
 	initSemaphores() == (
-		for all elem in set trackElements do (
+		for all elem in set elems trackElements do (
 			elem.initSemaphores()
 		)
 	)
@@ -81,26 +80,48 @@ operations
 	----- initializes all semaphores -----
 	public askToLeaveStation: Train ==> bool
 	askToLeaveStation(train) == (
-		dcl station: Station := iota s in set trackElements & s.hasTrain(train);
+		dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
 		dcl remainingTrains: set of Train := {t | t in set trains & t <> train};
-		if train.dir = <CLOCKWISE> then
-			if not moveTrain(station, station.nextClockwise) then
+		if train.dir = <CLOCKWISE> then (
+			if not station.nextClockwise.hasAnyTrain() then
 				return false
-		else if not moveTrain(station, station.nextCounterClockwise) then
-				return false;
+			else
+				moveTrain(station, station.nextClockwise);
+		)
+		else (
+			if not station.nextCounterClockwise.hasAnyTrain() then
+				return false
+			else
+				moveTrain(station, station.nextCounterClockwise);
+		);
 		advanceIter(remainingTrains);
 		return true;
 	)
 	pre
-		exists s in set trackElements & isofclass(Station, s) and s.hasTrain(train);
+		exists1 s in set elems trackElements & isofclass(Station, s) and s.hasTrain(train);
 		
 	
 	public advanceIter: set of Train ==> ()
-	advanceIter(trains) == (
-		
+	advanceIter(mvTrains) == (
+		for
 	)
 	pre
 		isClosed;
+		
+	private moveTrain: Station * Block ==> ()
+	moveTrain(src, dst) ==
+		is not yet specified;
+		
+	private moveTrain: Block * Station ==> ()
+	moveTrain(src, dst) ==
+		is not yet specified;
+		
+	private moveTrain: Block * Block ==> ()
+	moveTrain(src, dst) ==
+		is not yet specified
+	pre
+		not dst.hasAnyTrain() and
+		src.hasAnyTrain();
 	
 functions
 	

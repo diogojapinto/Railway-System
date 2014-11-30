@@ -6,6 +6,9 @@ instance variables
 	public nextClockwise: [TrackElement] := nil;
 	public nextCounterClockwise: [TrackElement] := nil;
 	
+	public semaphoreClockwise: SemaphoreLight := <RED>;
+	public semaphoreCounterClockwise: SemaphoreLight := <RED>;
+	
 operations
 	-- places a train in the the corresponding block
 	public placeTrain: Railway`Train ==> ()
