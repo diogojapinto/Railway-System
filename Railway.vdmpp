@@ -73,6 +73,13 @@ operations
 	--	);
 	--);
 	
+	public askPermissionToLeaveStation: Train ==> bool
+	askPermissionToLeaveStation(train) == (
+		dcl station: Station := 
+	) 
+	pre
+		
+	
 	public advanceIter: () ==> ()
 	advanceIter() ==
 		for all station in set {s | s in set elems trackElements & isofclass(Station, s)} do (
