@@ -97,6 +97,7 @@ operations
 		advanceIter(remainingTrains);
 		return true;
 	);
+	------------COULD NOT IMPLEMENT------------
 	--pre
 	--	exists1 s in set elems trackElements & isofclass(Station, s) and s.hasTrain(train);
 		
@@ -105,16 +106,20 @@ operations
 	advanceIter(mvTrains) == (
 		dcl movedTrains: set of Train := {};
 		for all train in set mvTrains do (
-			dcl trackElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
-			if isofclass(Station, trackElem) then
+			dcl srcElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
+			if isofclass(Station, srcElem) then
 				movedTrains:= movedTrains union {train}
-			else
-			--	if train.dir = <CLOCKWISE> then (
-					-- TODO
-			--	)
-			--	else (
-					-- TODO
-			--	)
+			else (
+				dcl dstElem: TrackElement;
+				if train.dir = <CLOCKWISE> then (
+					dstElem := srcElem.nextClockwise;
+				)
+				else (
+					dstElem := srcElem.nextCounterClockwise;
+				);
+				if moveTrain(train, srcElem, dstElem) then
+					movedTrains:= movedTrains union {train}
+			)
 		);
 		if card movedTrains = 0 then
 			return
@@ -124,8 +129,18 @@ operations
 	pre
 		isClosed;
 		
-	private moveTrain: Train * Station * Block ==> bool
-	moveTrain(train, src, dst) ==(
+	private moveTrain: Train * TrackElement * TrackElement ==> bool
+	moveTrain(train, src, dst) == 
+		if isofclass(Station, src) then
+			moveTrain1(train, src, dst)
+		else if isofclass(Station, dst) then
+			moveTrain2(train, src, dst)
+		else
+			moveTrain3(train, src, dst);
+	
+		
+	private moveTrain1: Train * Station * Block ==> bool
+	moveTrain1(train, src, dst) == (
 		if dst.train <> nil then
 			return false
 		else (
@@ -138,8 +153,8 @@ operations
 		train.dir = <CLOCKWISE> => src.clockwiseTrain = train and src.nextClockwise = dst and
 		train.dir = <COUNTER_CLOCKWISE> => src.counterClockwiseTrain = train and src.nextCounterClockwise = dst;
 		
-	private moveTrain: Train * Block * Station ==> bool
-	moveTrain(train, src, dst) == (
+	private moveTrain2: Train * Block * Station ==> bool
+	moveTrain2(train, src, dst) == (
 		if train.dir = <CLOCKWISE> => dst.clockwiseTrain <> nil and
 			train.dir = <COUNTER_CLOCKWISE> => dst.counterClockwiseTrain <> nil then
 			return false
@@ -154,8 +169,8 @@ operations
 		train.dir = <CLOCKWISE> => src.nextClockwise = dst and
 		train.dir = <COUNTER_CLOCKWISE> => src.nextCounterClockwise = dst;
 		
-	private moveTrain: Train * Block * Block ==> bool
-	moveTrain(train, src, dst) == (
+	private moveTrain3: Train * Block * Block ==> bool
+	moveTrain3(train, src, dst) == (
 		if dst.train <> nil then
 			return false
 		else (
