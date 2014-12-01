@@ -17,12 +17,10 @@ operations
 	placeTrain(train) == (
 		if train.dir = <CLOCKWISE> then (
 			clockwiseTrain := train;
-			nextCounterClockwise.setCSemaphore(<YELLOW>);
 			setCSemaphore(<RED>);
 		)
 		else (
 			counterClockwiseTrain := train;
-			nextClockwise.setCCSemaphore(<YELLOW>);
 			setCCSemaphore(<RED>);
 		)
 	)
@@ -33,10 +31,20 @@ operations
 		
 	public removeTrain: Railway`Train ==> ()
 	removeTrain(train) == 
-		if clockwiseTrain = train then
-			clockwiseTrain := nil
-		else -- if counterClockwiseTrain = train then
-			counterClockwiseTrain := nil
+		if clockwiseTrain = train then (
+			clockwiseTrain := nil;
+			if nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
+				setCSemaphore(<YELLOW>)
+			else
+				setCSemaphore(<GREEN>);
+		)
+		else (-- if counterClockwiseTrain = train then
+			counterClockwiseTrain := nil;
+			if nextClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
+				setCCSemaphore(<YELLOW>)
+			else
+				setCCSemaphore(<GREEN>)
+		)
 	pre
 		train in set {clockwiseTrain, counterClockwiseTrain};
 	
@@ -71,7 +79,7 @@ operations
 				setCCSemaphore(<YELLOW>)
 		else
 				setCCSemaphore(<GREEN>);
-		)
+	)
 functions		
 traces
 end Station

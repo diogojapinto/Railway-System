@@ -7,6 +7,8 @@ operations
 	-- only one train per block
 	public placeTrain: Railway`Train ==> ()
 	placeTrain(newTrain) == (
+		setCSemaphore(<RED>);
+		setCCSemaphore(<RED>);
 		train := newTrain;
 	)
 	pre
@@ -15,8 +17,18 @@ operations
 		train <> nil;
 		
 	public removeTrain: Railway`Train ==> ()
-	removeTrain(trainVar) == 
-		train := nil
+	removeTrain(trainVar) == (
+		train := nil;
+		if isofclass(Station, nextClockwise) or nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
+			setCSemaphore(<YELLOW>)
+		else
+			setCSemaphore(<GREEN>);
+		
+		if isofclass(Station, nextCounterClockwise) or nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
+			setCCSemaphore(<YELLOW>)
+		else
+			setCCSemaphore(<GREEN>);
+	)
 	pre
 		train = trainVar;
 	

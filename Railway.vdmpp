@@ -84,7 +84,6 @@ operations
 	public askToLeaveStation: Train ==> bool
 	askToLeaveStation(train) == (
 		dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
-		dcl remainingTrains: set of Train := trains \ {train};
 		-- verify if there is any train in the track
 		if isTrainInFollowingBlocks(train) then
 			return false;
@@ -176,8 +175,8 @@ operations
 		if dst.isSemaphoreRed(train.dir) then
 			return false
 		else (
-			src.removeTrain(train);
 			dst.placeTrain(train);
+			src.removeTrain(train);
 			return true;
 		)
 	)
@@ -190,8 +189,8 @@ operations
 		if dst.isSemaphoreRed(train.dir) then
 			return false
 		else (
-		  src.train := nil;
 		  dst.placeTrain(train);
+		  src.removeTrain(train);
 		  return true;
 		)
 	)
