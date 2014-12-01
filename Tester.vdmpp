@@ -2,7 +2,7 @@ class Tester
 types
 values
 instance variables
-   	testRes : bool;
+   	
 operations
 		protected assertTrue: bool ==> ()
     	assertTrue(cond) == return
@@ -22,14 +22,6 @@ operations
   		IO`println(")\n")
   	)
   	post expected = actual;
-  	
-   	protected assertFail: ? ==> ()
-   	assertFail(statement) ==
-   	trap statement
-   		with testRes := true
-   		in testRes := false
-   	post
-   		testRes = true;  		
    		
 functions
 traces

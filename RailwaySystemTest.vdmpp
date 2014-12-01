@@ -5,23 +5,47 @@ class RailwaySystemTest is subclass of Tester
 		b2 : TrackElement := new Block();
 		b3 : TrackElement := new Block();
 		b4 : TrackElement := new Block();
+		b5 : TrackElement := new Block();
 		s1 : TrackElement := new Station();
 		s2 : TrackElement := new Station();
+		dummy : seq of TrackElement;
+   	testRes : bool;
 		
 	operations
+	
+--COULD NOT IMPLEMENT--
     
-    private testSubsequentStations: () ==> ()
-    testSubsequentStations() ==
-    (
-    	railWay.appendTrackElement(b1);
-    	railWay.appendTrackElement(s1);
-    	assertFail(railWay.appendTrackElement(s2))
-    );
+--    private testSubsequentStations: () ==> ()
+--    testSubsequentStations() ==
+--    (
+--    	railWay.appendTrackElement(b1);
+--    	railWay.appendTrackElement(s1);
+--    	trap exception
+--    	with testRes := false
+--    	in railWay.appendTrackElement(s2);
+--    	testRes := true;
+--    )
+--    post testRes = true;
+    
+--    private testCloseTrack: () ==> ()
+--    testCloseTrack() ==
+--   	(
+--   		railWay.appendTrackElement(s1);
+--   		railWay.appendTrackElement(b1);
+--   		railWay.appendTrackElement(b4);
+--  		railWay.appendTrackElement(s2);
+--    	trap exception
+--    	with testRes := false
+--    	in dummy := railWay.closeTrack();
+--    	testRes := true;
+--   	)
+--    post testRes = true;
     	
     private testValidRailway: () ==> ()
     testValidRailway() ==
     (
     	dcl tracks: seq of TrackElement;
+   		railWay := new Railway();
     	railWay.appendTrackElement(b1);
     	railWay.appendTrackElement(s1);
     	railWay.appendTrackElement(b4);
@@ -31,13 +55,58 @@ class RailwaySystemTest is subclass of Tester
     	assertTrue(tracks = [b1, s1, b4, s2]);
     );
     
-    testCloseTrack() ==
+
+		testSemaphoreBeforeStation() ==
    	(
-   		railWay.appendTrackElement(s1);
+   		dcl tracks: seq of TrackElement;
+   		railWay := new Railway();
    		railWay.appendTrackElement(b1);
+   		railWay.appendTrackElement(b2);
+   		railWay.appendTrackElement(s1);
    		railWay.appendTrackElement(b4);
    		railWay.appendTrackElement(s2);
-   		assertFail(railWay.closeTrack())
+   		tracks := railWay.closeTrack();
+   		assertTrue(b2.semaphoreClockwise = <YELLOW>);
+   	);
+    
+    
+    testSemaphoreEmptyTrack() ==
+   	(
+   		dcl tracks: seq of TrackElement;
+   		
+   		railWay := new Railway();
+   		railWay.appendTrackElement(b1);
+   		railWay.appendTrackElement(b3);
+   		railWay.appendTrackElement(b2);
+   		railWay.appendTrackElement(s1);
+   		railWay.appendTrackElement(b4);
+   		railWay.appendTrackElement(s2);
+   		tracks := railWay.closeTrack();
+   		
+   		assertTrue(s1.semaphoreClockwise = <YELLOW>);
+   		assertTrue(s1.semaphoreCounterClockwise = <YELLOW>);
+   		
+   		assertTrue(b3.semaphoreCounterClockwise = <GREEN>);
+   		assertTrue(b3.semaphoreCounterClockwise = <GREEN>);
+   		
+   		assertTrue(b4.semaphoreCounterClockwise = <RED>);
+   		assertTrue(b2.semaphoreClockwise = <RED>);
+   	);
+   	
+   	testTrainPlacement() ==
+   	(
+   		dcl tracks: seq of TrackElement;
+   		
+   		railWay := new Railway();
+   		railWay.appendTrackElement(b1);
+   		railWay.appendTrackElement(b3);
+   		railWay.appendTrackElement(s1);
+   		railWay.appendTrackElement(b4);
+   		railWay.appendTrackElement(b5);
+   		
+   		railWay.placeTrain(3,<CLOCKWISE>);
+   		assertTrue(s1.hasAnyTrain());
+   		
    	);
     
     public static main: () ==> ()
@@ -45,8 +114,8 @@ class RailwaySystemTest is subclass of Tester
     (
       dcl tester: RailwaySystemTest := new RailwaySystemTest();
       tester.testValidRailway();
-      tester.testSubsequentStations();
-      tester.testCloseTrack();
+     -- tester.testSemaphoreBeforeStation();
+      tester.testTrainPlacement();
     );
     
 end RailwaySystemTest
