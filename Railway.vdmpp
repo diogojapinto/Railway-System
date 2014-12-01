@@ -96,9 +96,9 @@ operations
 		);
 		advanceIter(remainingTrains);
 		return true;
-	)
-	pre
-		exists1 s in set elems trackElements & isofclass(Station, s) and s.hasTrain(train);
+	);
+	--pre
+	--	exists1 s in set elems trackElements & isofclass(Station, s) and s.hasTrain(train);
 		
 	
 	public advanceIter: set of Train ==> ()
@@ -108,12 +108,12 @@ operations
 			dcl trackElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
 			if isofclass(Station, trackElem) then
 				movedTrains:= movedTrains union {train}
-			--else
+			else
 			--	if train.dir = <CLOCKWISE> then (
-			--		-- TODO
+					-- TODO
 			--	)
 			--	else (
-			--		-- TODO
+					-- TODO
 			--	)
 		);
 		if card movedTrains = 0 then
