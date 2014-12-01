@@ -2,7 +2,7 @@ class Block is subclass of TrackElement
 types
 values
 instance variables
-	train: [Railway`Train] := nil;
+	public train: [Railway`Train] := nil;
 operations
 	-- only one train per block
 	public placeTrain: Railway`Train ==> ()
@@ -14,14 +14,19 @@ operations
 	post
 		train <> nil;
 		
+	public removeTrain: Railway`Train ==> ()
+	removeTrain(trainVar) == 
+		train := nil
+	pre
+		train = trainVar;
 	
 	public hasAnyTrain: () ==> bool
 	hasAnyTrain() ==
 		return train <> nil;
 		
 	public hasTrain: Railway`Train ==> bool
-	hasTrain(o_train) ==
-		return train = o_train;
+	hasTrain(trainVar) ==
+		return train = trainVar;
 	
 	public initSemaphores: () ==> ()
 	initSemaphores() ==

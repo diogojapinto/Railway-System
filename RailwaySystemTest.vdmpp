@@ -16,6 +16,17 @@ class RailwaySystemTest
 		private assertFalse: bool ==> ()
     	assertFalse(cond) == return
     	pre not cond;
+    
+    protected assertEqual: ? * ? ==> ()
+  	assertEqual(expected, actual) == 
+  	if expected <> actual then (
+  		IO`print("Actual value (");
+  		IO`print(actual); 
+  		IO`print(") different from expected (");
+  		IO`print(expected);
+  		IO`println(")\n")
+  	)
+  post expected = actual;
     	
     private testValidRailway: () ==> ()
     testValidRailway() ==

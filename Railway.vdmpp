@@ -108,14 +108,14 @@ operations
 			dcl trackElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
 			if isofclass(Station, trackElem) then
 				movedTrains:= movedTrains union {train}
-			else
-				if train.dir = <CLOCKWISE> then (
-					-- TODO
-				)
-				else (
-					-- TODO
-				)									
-		)
+			--else
+			--	if train.dir = <CLOCKWISE> then (
+			--		-- TODO
+			--	)
+			--	else (
+			--		-- TODO
+			--	)
+		);
 		if card movedTrains = 0 then
 			return
 		else
@@ -124,20 +124,50 @@ operations
 	pre
 		isClosed;
 		
-	private moveTrain: Train * Station * Block ==> ()
-	moveTrain(train, src, dst) ==
-		is not yet specified;
-		
-	private moveTrain: Train * Block * Station ==> ()
-	moveTrain(train, src, dst) ==
-		is not yet specified;
-		
-	private moveTrain: Train * Block * Block ==> ()
-	moveTrain(train, src, dst) ==
-		is not yet specified
+	private moveTrain: Train * Station * Block ==> bool
+	moveTrain(train, src, dst) ==(
+		if dst.train <> nil then
+			return false
+		else (
+			src.removeTrain(train);
+			dst.placeTrain(train);
+			return true;
+		)
+	)
 	pre
-		not dst.hasAnyTrain() and
-		src.hasAnyTrain();
+		train.dir = <CLOCKWISE> => src.clockwiseTrain = train and src.nextClockwise = dst and
+		train.dir = <COUNTER_CLOCKWISE> => src.counterClockwiseTrain = train and src.nextCounterClockwise = dst;
+		
+	private moveTrain: Train * Block * Station ==> bool
+	moveTrain(train, src, dst) == (
+		if train.dir = <CLOCKWISE> => dst.clockwiseTrain <> nil and
+			train.dir = <COUNTER_CLOCKWISE> => dst.counterClockwiseTrain <> nil then
+			return false
+		else (
+			src.train := nil;
+			dst.placeTrain(train);
+			return true;
+		)
+	)
+	pre
+		src.train <> nil and
+		train.dir = <CLOCKWISE> => src.nextClockwise = dst and
+		train.dir = <COUNTER_CLOCKWISE> => src.nextCounterClockwise = dst;
+		
+	private moveTrain: Train * Block * Block ==> bool
+	moveTrain(train, src, dst) == (
+		if dst.train <> nil then
+			return false
+		else (
+		  src.train := nil;
+		  dst.placeTrain(train);
+		  return true;
+		)
+	)
+	pre
+		src.train = train and
+		train.dir = <CLOCKWISE> => src.nextClockwise = dst and
+		train.dir = <COUNTER_CLOCKWISE> => src.nextCounterClockwise = dst;
 	
 functions
 	

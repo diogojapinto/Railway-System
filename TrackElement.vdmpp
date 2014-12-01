@@ -26,6 +26,10 @@ operations
 	hasTrain(train) ==
 		is subclass responsibility;
 		
+	public removeTrain: Railway`Train ==> ()
+	removeTrain(train) == 
+		is subclass responsibility;
+		
 	-- return the light of the clockwise semaphore
 	public setCSemaphore: SemaphoreLight ==> ()
 	setCSemaphore(light) == (

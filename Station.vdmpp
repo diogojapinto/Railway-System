@@ -3,8 +3,8 @@ types
 values
 instance variables
 	-- only one train in each parallel block
-	clockwiseTrain: [Railway`Train] := nil;
-	counterClockwiseTrain: [Railway`Train] := nil;
+	public clockwiseTrain: [Railway`Train] := nil;
+	public counterClockwiseTrain: [Railway`Train] := nil;
 	
 	-- must be followed and preceded by Blocks
 	inv nextClockwise <> nil => isofclass(Block, nextClockwise);
@@ -17,7 +17,7 @@ operations
 	placeTrain(train) == (
 		if train.dir = <CLOCKWISE> then (
 			clockwiseTrain := train;
-			nextClockwise.setCSemaphore(<YELLOW>);
+			nextCounterClockwise.setCSemaphore(<YELLOW>);
 			setCSemaphore(<RED>);
 		)
 		else (
@@ -31,6 +31,15 @@ operations
 		(clockwiseTrain <> nil => clockwiseTrain.dir = <COUNTER_CLOCKWISE>)
 		and (counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>);
 		
+	public removeTrain: Railway`Train ==> ()
+	removeTrain(train) == 
+		if clockwiseTrain = train then
+			clockwiseTrain := nil
+		else -- if counterClockwiseTrain = train then
+			counterClockwiseTrain := nil
+	pre
+		train in set {clockwiseTrain, counterClockwiseTrain};
+	
 	public hasAnyTrain: () ==> bool
 	hasAnyTrain() ==
 		return clockwiseTrain <> nil or clockwiseTrain <> nil;
