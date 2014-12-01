@@ -1,0 +1,36 @@
+class Tester
+types
+values
+instance variables
+   	testRes : bool;
+operations
+		protected assertTrue: bool ==> ()
+    	assertTrue(cond) == return
+    	pre cond;
+    	
+		protected assertFalse: bool ==> ()
+    	assertFalse(cond) == return
+    	pre not cond;
+        
+    protected assertEqual: ? * ? ==> ()
+  	assertEqual(expected, actual) == 
+  	if expected <> actual then (
+  		IO`print("Actual value (");
+  		IO`print(actual); 
+  		IO`print(") different from expected (");
+  		IO`print(expected);
+  		IO`println(")\n")
+  	)
+  	post expected = actual;
+  	
+   	protected assertFail: ? ==> ()
+   	assertFail(statement) ==
+   	trap statement
+   		with testRes := true
+   		in testRes := false
+   	post
+   		testRes = true;  		
+   		
+functions
+traces
+end Tester

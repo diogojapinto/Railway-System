@@ -48,7 +48,7 @@ operations
 	initSemaphores() ==
 		is subclass responsibility;
 	
-	public isSemaphoreRed: Railway`Direction ==> ()
+	public isSemaphoreRed: Railway`Direction ==> bool
 	isSemaphoreRed(dir) ==
 		if dir = <CLOCKWISE> then
 			return semaphoreClockwise = <RED>
