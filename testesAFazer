@@ -1,0 +1,7 @@
+Test List:
+Test track is valid (testing appendTrackElement)
+--Test close track (test if close track returns a valid track or fails if invalid track)
+--Test semaphors (various scenarios)
+--Test just one train between two stations
+--Test can't leave station without asking permission
+--Test stops at red

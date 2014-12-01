@@ -1,4 +1,4 @@
-class RailwaySystemTest
+class RailwaySystemTest is subclass of Tester
 	instance variables
 		railWay : Railway := new Railway();
 		b1 : TrackElement := new Block();
@@ -9,24 +9,14 @@ class RailwaySystemTest
 		s2 : TrackElement := new Station();
 		
 	operations
-		private assertTrue: bool ==> ()
-    	assertTrue(cond) == return
-    	pre cond;
-    	
-		private assertFalse: bool ==> ()
-    	assertFalse(cond) == return
-    	pre not cond;
     
-    protected assertEqual: ? * ? ==> ()
-  	assertEqual(expected, actual) == 
-  	if expected <> actual then (
-  		IO`print("Actual value (");
-  		IO`print(actual); 
-  		IO`print(") different from expected (");
-  		IO`print(expected);
-  		IO`println(")\n")
-  	)
-  post expected = actual;
+    private testSubsequentStations: () ==> ()
+    testSubsequentStations() ==
+    (
+    	railWay.appendTrackElement(b1);
+    	railWay.appendTrackElement(s1);
+    	assertFail(railWay.appendTrackElement(s2))
+    );
     	
     private testValidRailway: () ==> ()
     testValidRailway() ==
@@ -41,11 +31,22 @@ class RailwaySystemTest
     	assertTrue(tracks = [b1, s1, b4, s2]);
     );
     
+    testCloseTrack() ==
+   	(
+   		railWay.appendTrackElement(s1);
+   		railWay.appendTrackElement(b1);
+   		railWay.appendTrackElement(b4);
+   		railWay.appendTrackElement(s2);
+   		assertFail(railWay.closeTrack())
+   	);
+    
     public static main: () ==> ()
     main() ==
     (
       dcl tester: RailwaySystemTest := new RailwaySystemTest();
       tester.testValidRailway();
+      tester.testSubsequentStations();
+      tester.testCloseTrack();
     );
     
 end RailwaySystemTest
