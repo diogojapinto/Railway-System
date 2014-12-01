@@ -63,16 +63,15 @@ operations
 		else if nextClockwise.hasAnyTrain() then
 				setCSemaphore(<YELLOW>)
 		else
-				setCSemaphore(<RED>);
+				setCSemaphore(<GREEN>);
 		
 		if hasCCTrain() then
 				setCCSemaphore(<RED>)
 		else if nextCounterClockwise.hasAnyTrain() then
 				setCCSemaphore(<YELLOW>)
 		else
-				setCCSemaphore(<RED>);
+				setCCSemaphore(<GREEN>);
 		)
-		
 functions		
 traces
 end Station

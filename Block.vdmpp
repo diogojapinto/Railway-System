@@ -35,15 +35,20 @@ operations
 			setCCSemaphore(<RED>);
 		)
 		else (
-			if nextClockwise.hasAnyTrain() or isofclass(Station, nextClockwise) then
-				setCSemaphore(<YELLOW>)
-			else 
+			if isofclass(Station, nextCounterClockwise) then
+				setCSemaphore(<RED>)
+			else if nextClockwise.hasAnyTrain() then (
+				setCSemaphore(<YELLOW>);
+			)
+			else
 				setCSemaphore(<GREEN>);
-				
-			if nextCounterClockwise.hasAnyTrain() or isofclass(Station, nextCounterClockwise) then
+		
+			if isofclass(Station, nextClockwise) then
+				setCCSemaphore(<RED>)
+			else if nextCounterClockwise.hasAnyTrain() then
 				setCCSemaphore(<YELLOW>)
 			else 
-				setCCSemaphore(<GREEN>)
+				setCCSemaphore(<GREEN>);
 		)
 		
 functions

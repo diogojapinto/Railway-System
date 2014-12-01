@@ -59,13 +59,16 @@ operations
 	public placeTrain: nat * Direction ==> ()
 	placeTrain(index, dir) == (
 		dcl newTrain: Train := mk_Train(mk_token(trainCounter), false, dir);
+		
 		atomic(
 			trains := trains union {newTrain};
 			trainCounter := trainCounter + 1;
 		);
 		
 		trackElements(index).placeTrain(newTrain);
-	);
+	)
+	pre
+		isofclass(Station, trackElements(index));
 	
 	
 	----- initializes all semaphores -----
@@ -82,39 +85,75 @@ operations
 	askToLeaveStation(train) == (
 		dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
 		dcl remainingTrains: set of Train := trains \ {train};
+		-- verify if there is any train in the track
+		if isTrainInFollowingBlocks(train) then
+			return false;
+		
 		if train.dir = <CLOCKWISE> then (
 			if not station.nextClockwise.hasAnyTrain() then
 				return false
 			else
-				moveTrain(train, station, station.nextClockwise);
+				station.nextClockwise.setCSemaphore(<GREEN>);
 		)
 		else (
 			if not station.nextCounterClockwise.hasAnyTrain() then
 				return false
 			else
-				moveTrain(train, station, station.nextCounterClockwise);
+				station.nextCounterClockwise.setCCSemaphore(<GREEN>);
 		);
-		advanceIter(remainingTrains);
 		return true;
 	);
---	pre
+	------------COULD NOT IMPLEMENT------------
+	--pre
 	--	exists1 s in set elems trackElements & isofclass(Station, s) and s.hasTrain(train);
-		
+	
+	private isTrainInFollowingBlocks: Train ==> bool
+	isTrainInFollowingBlocks(train) == (
+		dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
+		dcl blocks: seq of TrackElement := [];
+		dcl elem: TrackElement;
+		if train.dir = <CLOCKWISE> then (
+			elem := station.nextClockwise;
+			while isofclass(Block, elem) do (
+				blocks := blocks ^ [elem];
+				elem := elem.nextClockwise;
+			)
+		)
+		else (
+			elem := station.nextCounterClockwise;
+			while isofclass(Block, elem) do (
+				blocks := blocks ^ [elem];
+				elem := elem.nextCounterClockwise;
+			)
+		);
+		return not exists b in set elems blocks & b.hasAnyTrain();
+	);
 	
 	public advanceIter: set of Train ==> ()
 	advanceIter(mvTrains) == (
 		dcl movedTrains: set of Train := {};
 		for all train in set mvTrains do (
-			dcl trackElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
-			if isofclass(Station, trackElem) then
+			dcl srcElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
+			dcl dstElem: TrackElement;
+			dcl dummy: bool;
+			if train.dir = <CLOCKWISE> then (
+					dstElem := srcElem.nextClockwise;
+			)
+			else (
+				dstElem := srcElem.nextCounterClockwise;
+			);
+			
+			if isofclass(Station, srcElem) then (
+				if train.dir = <CLOCKWISE> and dstElem.semaphoreClockwise = <GREEN> then 
+					dummy := moveTrain(train, srcElem, dstElem)
+				else if train.dir = <COUNTER_CLOCKWISE> and dstElem.semaphoreCounterClockwise = <GREEN> then 
+					dummy := moveTrain(train, srcElem, dstElem);
 				movedTrains:= movedTrains union {train}
-			else
-			--	if train.dir = <CLOCKWISE> then (
-					-- TODO
-			--	)
-			--	else (
-					-- TODO
-			--	)
+			)
+			else (
+				if moveTrain(train, srcElem, dstElem) then
+					movedTrains:= movedTrains union {train}
+			)
 		);
 		if card movedTrains = 0 then
 			return
@@ -124,9 +163,17 @@ operations
 	pre
 		isClosed;
 		
-	private moveTrain: Train * Station * Block ==> bool
-	moveTrain(train, src, dst) ==(
-		if dst.train <> nil then
+	private moveTrain: Train * TrackElement * TrackElement ==> bool
+	moveTrain(train, src, dst) == 
+		if isofclass(Station, src) then
+			moveTrain1(train, src, dst)
+		else
+			moveTrain2(train, src, dst);
+	
+		
+	private moveTrain1: Train * Station * Block ==> bool
+	moveTrain1(train, src, dst) == (
+		if dst.isSemaphoreRed(train.dir) then
 			return false
 		else (
 			src.removeTrain(train);
@@ -138,25 +185,9 @@ operations
 		train.dir = <CLOCKWISE> => src.clockwiseTrain = train and src.nextClockwise = dst and
 		train.dir = <COUNTER_CLOCKWISE> => src.counterClockwiseTrain = train and src.nextCounterClockwise = dst;
 		
-	private moveTrain: Train * Block * Station ==> bool
-	moveTrain(train, src, dst) == (
-		if train.dir = <CLOCKWISE> => dst.clockwiseTrain <> nil and
-			train.dir = <COUNTER_CLOCKWISE> => dst.counterClockwiseTrain <> nil then
-			return false
-		else (
-			src.train := nil;
-			dst.placeTrain(train);
-			return true;
-		)
-	)
-	pre
-		src.train <> nil and
-		train.dir = <CLOCKWISE> => src.nextClockwise = dst and
-		train.dir = <COUNTER_CLOCKWISE> => src.nextCounterClockwise = dst;
-		
-	private moveTrain: Train * Block * Block ==> bool
-	moveTrain(train, src, dst) == (
-		if dst.train <> nil then
+	private moveTrain2: Train * Block * Block ==> bool
+	moveTrain2(train, src, dst) == (
+		if dst.isSemaphoreRed(train.dir) then
 			return false
 		else (
 		  src.train := nil;

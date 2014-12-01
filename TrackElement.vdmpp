@@ -48,6 +48,13 @@ operations
 	initSemaphores() ==
 		is subclass responsibility;
 	
+	public isSemaphoreRed: Railway`Direction ==> bool
+	isSemaphoreRed(dir) ==
+		if dir = <CLOCKWISE> then
+			return semaphoreClockwise = <RED>
+		else
+			return semaphoreCounterClockwise = <RED>;
+	
 functions
 traces
 end TrackElement
