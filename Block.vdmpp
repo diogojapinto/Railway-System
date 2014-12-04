@@ -4,8 +4,9 @@ values
 instance variables
 	public train: [Railway`Train] := nil;
 	
-	inv isofclass(Station, nextClockwise) => semaphoreClockwise <> <GREEN>;
-	inv isofclass(Station, nextCounterClockwise) => semaphoreCounterClockwise <> <GREEN>;
+	-- Not viable if block is surrounded 
+	-- inv isofclass(Station, nextClockwise) => semaphoreClockwise <> <GREEN>;
+	-- inv isofclass(Station, nextCounterClockwise) => semaphoreCounterClockwise <> <GREEN>;
 	
 operations
 	-- only one train per block

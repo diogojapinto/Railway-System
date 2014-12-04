@@ -5,7 +5,7 @@ types
 									dir         : Direction;
 values
 instance variables
-	public static trainCounter: nat := 0;
+	public trainCounter: nat := 0;
 	
 	private isClosed: bool := false;
 	
@@ -13,7 +13,7 @@ instance variables
 	public trains: set of Train := {};
 	
 	------------COULD NOT IMPLEMENT------------
-	-- inv trainCounter = card trains;
+	 inv trainCounter = card trains;
 operations
 
 	--------------------
@@ -56,13 +56,14 @@ operations
 		trackElements(1).nextCounterClockwise = trackElements(len trackElements) and
 		trackElements(len trackElements).nextClockwise = trackElements(1);
 	
-	public placeTrain: nat * Direction ==> ()
+	public placeTrain: nat * Direction ==> Train
 	placeTrain(index, dir) == (
 		dcl newTrain: Train := mk_Train(mk_token(trainCounter), dir);
 		
 		atomic(trainCounter := trainCounter + 1; trains := trains union {newTrain});
 		
 		trackElements(index).placeTrain(newTrain);
+		return newTrain;
 	)
 	pre
 		isofclass(Station, trackElements(index));
@@ -88,18 +89,10 @@ operations
 		if isTrainInFollowingBlocks(train) then
 			return false;
 		
-		if train.dir = <CLOCKWISE> then (
-			if not station.nextClockwise.hasAnyTrain() then
-				return false
-			else
-				station.nextClockwise.setCSemaphore(<GREEN>);
-		)
-		else (
-			if not station.nextCounterClockwise.hasAnyTrain() then
-				return false
-			else
+		if train.dir = <CLOCKWISE> then 
+				station.nextClockwise.setCSemaphore(<GREEN>)
+		else
 				station.nextCounterClockwise.setCCSemaphore(<GREEN>);
-		);
 		return true;
 	);
 	------------COULD NOT IMPLEMENT------------
@@ -125,7 +118,7 @@ operations
 				elem := elem.nextCounterClockwise;
 			)
 		);
-		return not exists b in set elems blocks & b.hasAnyTrain();
+		return exists b in set elems blocks & b.hasAnyTrain();
 	);
 	
 	public advanceIter: set of Train ==> ()
