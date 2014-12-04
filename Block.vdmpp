@@ -4,7 +4,7 @@ values
 instance variables
 	public train: [Railway`Train] := nil;
 	
-	-- Not viable if block is surrounded 
+	-- Not viable if block is surrounded by Stations
 	-- inv isofclass(Station, nextClockwise) => semaphoreClockwise <> <GREEN>;
 	-- inv isofclass(Station, nextCounterClockwise) => semaphoreCounterClockwise <> <GREEN>;
 	
