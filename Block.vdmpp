@@ -20,7 +20,8 @@ operations
 		train = nil
 	post
 		train <> nil;
-		
+	
+	--remove trains and set semaphores accordingly
 	public removeTrain: Railway`Train ==> ()
 	removeTrain(trainVar) == (
 		train := nil;
@@ -45,6 +46,7 @@ operations
 	hasTrain(trainVar) ==
 		return train = trainVar;
 	
+	----- initializes all semaphores -----
 	public initSemaphores: () ==> ()
 	initSemaphores() ==
 		if hasAnyTrain() then (

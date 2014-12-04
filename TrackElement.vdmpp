@@ -25,7 +25,8 @@ operations
 	public hasTrain: Railway`Train ==> bool
 	hasTrain(train) ==
 		is subclass responsibility;
-		
+	
+	-- remove the specified train
 	public removeTrain: Railway`Train ==> ()
 	removeTrain(train) == 
 		is subclass responsibility;
@@ -44,10 +45,12 @@ operations
 	)
 	pre light = <GREEN> => nextCounterClockwise.semaphoreCounterClockwise <> <RED>;
 	
+	-- initialize semaphores
 	public initSemaphores: () ==> ()
 	initSemaphores() ==
 		is subclass responsibility;
 	
+	-- checks if the tracks semaphores are red
 	public isSemaphoreRed: Railway`Direction ==> bool
 	isSemaphoreRed(dir) ==
 		if dir = <CLOCKWISE> then

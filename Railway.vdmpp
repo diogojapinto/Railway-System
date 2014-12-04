@@ -56,6 +56,7 @@ operations
 		trackElements(1).nextCounterClockwise = trackElements(len trackElements) and
 		trackElements(len trackElements).nextClockwise = trackElements(1);
 	
+	-- Places a new train in a station
 	public placeTrain: nat * Direction ==> Train
 	placeTrain(index, dir) == (
 		dcl newTrain: Train := mk_Train(mk_token(trainCounter), dir);
@@ -109,18 +110,21 @@ operations
 			while isofclass(Block, elem) do (
 				blocks := blocks ^ [elem];
 				elem := elem.nextClockwise;
-			)
+			);
+			if not blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>) then return true;
 		)
 		else (
 			elem := station.nextCounterClockwise;
 			while isofclass(Block, elem) do (
 				blocks := blocks ^ [elem];
 				elem := elem.nextCounterClockwise;
-			)
+			);
+			if not blocks(len blocks).isSemaphoreRed(<CLOCKWISE>) then return true;
 		);
 		return exists b in set elems blocks & b.hasAnyTrain();
 	);
 	
+	----- Advances one iteration all trains. Advances first all trains that can move, and then try to move all train that wouldn't move at the first time -----
 	public advanceIter: set of Train ==> ()
 	advanceIter(mvTrains) == (
 		dcl movedTrains: set of Train := {};

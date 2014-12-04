@@ -11,6 +11,7 @@ instance variables
 	inv nextCounterClockwise <> nil => isofclass(Block, nextCounterClockwise)
 	
 operations
+	-- place a train and set semaphores accordingly
 	public placeTrain: Railway`Train ==> ()
 	placeTrain(train) == (
 		if train.dir = <CLOCKWISE> then (
@@ -27,6 +28,7 @@ operations
 		(clockwiseTrain <> nil => clockwiseTrain.dir = <CLOCKWISE>)
 		and (counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>);
 		
+    -- remove a train and set semaphores accordingly
 	public removeTrain: Railway`Train ==> ()
 	removeTrain(train) == 
 		if clockwiseTrain = train then (
@@ -44,24 +46,30 @@ operations
 				setCCSemaphore(<GREEN>)
 		)
 	pre
+			-- train exists in sets of trains
 		train in set {clockwiseTrain, counterClockwiseTrain};
 	
+	-- checks if Ctrain or CCtrain are not nil
 	public hasAnyTrain: () ==> bool
 	hasAnyTrain() ==
-		return clockwiseTrain <> nil or clockwiseTrain <> nil;
+		return clockwiseTrain <> nil or counterClockwiseTrain <> nil;
 		
+	-- checks if it is a Ctrain or a CCtrain
 	public hasTrain: Railway`Train ==> bool
 	hasTrain(train) ==
 		return clockwiseTrain = train or counterClockwiseTrain = train;
 		
+	-- checks if Ctrain is not nil	
 	public hasCTrain: () ==> bool
 	hasCTrain() ==
 		return clockwiseTrain <> nil;
-		
+	
+	-- checks if CCtrain is not nil	
 	public hasCCTrain: () ==> bool
 	hasCCTrain() ==
 		return counterClockwiseTrain <> nil;
-		
+	
+	-- Initialize semaphores of the track
 	public initSemaphores: () ==> ()
 	initSemaphores() == (
 		if hasCTrain() then

@@ -4,10 +4,12 @@ values
 instance variables
    	
 operations
+		-- Checks if condition is true
 		protected assertTrue: bool ==> ()
     	assertTrue(cond) == return
     	pre cond;
-    	
+    
+    -- Checks if condition is false	
 		protected assertFalse: bool ==> ()
     	assertFalse(cond) == return
     	pre not cond;
