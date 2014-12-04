@@ -3,6 +3,10 @@ types
 values
 instance variables
 	public train: [Railway`Train] := nil;
+	
+	inv isofclass(Station, nextClockwise) => semaphoreClockwise <> <GREEN>;
+	inv isofclass(Station, nextCounterClockwise) => semaphoreCounterClockwise <> <GREEN>;
+	
 operations
 	-- only one train per block
 	public placeTrain: Railway`Train ==> ()
@@ -49,7 +53,7 @@ operations
 		else (
 			if isofclass(Station, nextCounterClockwise) then
 				setCSemaphore(<RED>)
-			else if nextClockwise.hasAnyTrain() then (
+			else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) or isofclass(Station, nextClockwise) then (
 				setCSemaphore(<YELLOW>);
 			)
 			else
@@ -57,7 +61,7 @@ operations
 		
 			if isofclass(Station, nextClockwise) then
 				setCCSemaphore(<RED>)
-			else if nextCounterClockwise.hasAnyTrain() then
+			else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) or isofclass(Station, nextCounterClockwise) then
 				setCCSemaphore(<YELLOW>)
 			else 
 				setCCSemaphore(<GREEN>);

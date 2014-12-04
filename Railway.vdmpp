@@ -2,7 +2,6 @@ class Railway
 types
 	public Direction = <CLOCKWISE> | <COUNTER_CLOCKWISE>;
 	public Train :: id          : token
-									isAtStation : bool
 									dir         : Direction;
 values
 instance variables
@@ -13,7 +12,8 @@ instance variables
 	public trackElements: seq of TrackElement := [];
 	public trains: set of Train := {};
 	
-	inv trainCounter = card trains;
+	------------COULD NOT IMPLEMENT------------
+	-- inv trainCounter = card trains;
 operations
 
 	--------------------
@@ -58,12 +58,9 @@ operations
 	
 	public placeTrain: nat * Direction ==> ()
 	placeTrain(index, dir) == (
-		dcl newTrain: Train := mk_Train(mk_token(trainCounter), false, dir);
+		dcl newTrain: Train := mk_Train(mk_token(trainCounter), dir);
 		
-		atomic(
-			trains := trains union {newTrain};
-			trainCounter := trainCounter + 1;
-		);
+		atomic(trainCounter := trainCounter + 1; trains := trains union {newTrain});
 		
 		trackElements(index).placeTrain(newTrain);
 	)
@@ -74,9 +71,12 @@ operations
 	----- initializes all semaphores -----
 	private initSemaphores: () ==> ()
 	initSemaphores() == (
-		for all elem in set elems trackElements do (
+		for all elem in set {b | b in set elems trackElements & isofclass(Block, b)} do (
 			elem.initSemaphores()
-		)
+		);
+		for all elem in set {s | s in set elems trackElements & isofclass(Station, s)} do (
+			elem.initSemaphores()
+		);
 	)
 	pre isClosed = false;
 	

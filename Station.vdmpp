@@ -9,8 +9,6 @@ instance variables
 	-- must be followed and preceded by Blocks
 	inv nextClockwise <> nil => isofclass(Block, nextClockwise);
 	inv nextCounterClockwise <> nil => isofclass(Block, nextCounterClockwise)
-		-- previous block must not have GREEN light
-		and nextCounterClockwise.semaphoreClockwise <> <GREEN>;
 	
 operations
 	public placeTrain: Railway`Train ==> ()
@@ -26,7 +24,7 @@ operations
 	)
 	post
 		-- trains circulate through the left
-		(clockwiseTrain <> nil => clockwiseTrain.dir = <COUNTER_CLOCKWISE>)
+		(clockwiseTrain <> nil => clockwiseTrain.dir = <CLOCKWISE>)
 		and (counterClockwiseTrain <> nil => counterClockwiseTrain.dir = <COUNTER_CLOCKWISE>);
 		
 	public removeTrain: Railway`Train ==> ()
@@ -68,14 +66,14 @@ operations
 	initSemaphores() == (
 		if hasCTrain() then
 				setCSemaphore(<RED>)
-		else if nextClockwise.hasAnyTrain() then
+		else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
 				setCSemaphore(<YELLOW>)
 		else
 				setCSemaphore(<GREEN>);
 		
 		if hasCCTrain() then
 				setCCSemaphore(<RED>)
-		else if nextCounterClockwise.hasAnyTrain() then
+		else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
 				setCCSemaphore(<YELLOW>)
 		else
 				setCCSemaphore(<GREEN>);
