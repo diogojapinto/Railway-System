@@ -20,7 +20,8 @@ operations
 		train = nil
 	post
 		train <> nil;
-		
+	
+	--remove trains and set semaphores accordingly
 	public removeTrain: Railway`Train ==> ()
 	removeTrain(trainVar) == (
 		train := nil;
@@ -55,6 +56,7 @@ operations
 		if train <> nil then return train.dir = <COUNTER_CLOCKWISE>
 		else return false;
 	
+	----- initializes all semaphores -----
 	public initSemaphores: () ==> ()
 	initSemaphores() ==
 		if hasAnyTrain() then (

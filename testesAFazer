@@ -1,15 +1,15 @@
 Test List:
-Test track is valid (testing appendTrackElement)
-Test close track (test if close track returns a valid track or fails if invalid track)
+Test track is valid (testing appendTrackElement) → ✔
+Test close track (test if close track returns a valid track or fails if invalid track)→ ✔
 Test semaphors (various scenarios)
 
 
 --Test just one train between two stations
-um numa, um noutra, sentidos opostos, pedem ambos permiss�o, advance iter e verificar que apenas um se move
+um numa, um noutra, sentidos opostos, pedem ambos permissão, advance iter e verificar que apenas um se move →  ✔ aquilo ta a dar uns erros estranhos que nao consigo perceber do debug
 
-Test can't leave station without asking permission
+Test can't leave station without asking permission →  ✔
 
---Test stops at red 
-eles come�am em esta��es
+--Test stops at red →  http://snag.gy/nIvsf.jpg →  ver isto, ele o hasAnyTrain() esta a falhar 
+eles começam em estações
 meto um numa outro noutra
-no primeiro pe�o permiss�o e fa�o advance iter at� antes da esta��o do outro para verificar que para no vermelho
+no primeiro peço permissão e faço advance iter até antes da estação do outro para verificar que para no vermelho
