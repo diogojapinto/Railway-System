@@ -90,10 +90,18 @@ operations
 		if isTrainInFollowingBlocks(train) then
 			return false;
 		
-		if train.dir = <CLOCKWISE> then 
+		if train.dir = <CLOCKWISE> then (
+			if station.nextClockwise.nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
+				station.nextClockwise.setCSemaphore(<YELLOW>)
+			else
 				station.nextClockwise.setCSemaphore(<GREEN>)
-		else
-				station.nextCounterClockwise.setCCSemaphore(<GREEN>);
+		)
+		else (
+			if station.nextCounterClockwise.nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
+				station.nextCounterClockwise.setCCSemaphore(<YELLOW>)
+			else
+				station.nextCounterClockwise.setCCSemaphore(<GREEN>)
+		);
 		return true;
 	);
 	------------COULD NOT IMPLEMENT------------
