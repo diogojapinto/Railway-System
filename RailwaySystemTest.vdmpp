@@ -100,6 +100,7 @@ class RailwaySystemTest is subclass of Tester
    		railWay.appendTrackElement(s1);
    		railWay.appendTrackElement(b4);
    		railWay.appendTrackElement(b5);
+   		tracks := railWay.closeTrack();
    		
    		train := railWay.placeTrain(3,<CLOCKWISE>);
    		assertTrue(s1.hasAnyTrain());
