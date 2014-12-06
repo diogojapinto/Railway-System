@@ -278,7 +278,7 @@ class RailwaySystemTest is subclass of Tester
    		assertTrue(b4.semaphoreClockwise = <YELLOW>);   
    		
    		railWay.advanceIter({train});
-   		assertTrue(b4.hasCTrain()); --ERROR HERE IT SHOULD HAVE MOVED TO B4 --FIXED
+   		assertTrue(b4.hasCTrain());
    		assertTrue(s2.semaphoreClockwise = <RED>); 
    		
    		--FAILS here because it cant advance to the next station
