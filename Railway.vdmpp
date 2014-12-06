@@ -110,8 +110,7 @@ operations
 				blocks := blocks ^ [elem];
 				elem := elem.nextClockwise;
 			);
-			blocks := blocks ^ [elem];
-			return exists b in set elems blocks & b.hasCCTrain();
+			return exists b in set elems blocks & b.hasCCTrain() and blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
 		)
 		else (
 			elem := station.nextCounterClockwise;
@@ -119,8 +118,8 @@ operations
 				blocks := blocks ^ [elem];
 				elem := elem.nextCounterClockwise;
 			);
-			blocks := blocks ^ [elem];
-			return exists b in set elems blocks & b.hasCTrain();
+			-- verify if there is any train comming or if last block accepts the train to exit
+			return exists b in set elems blocks & b.hasCTrain() and blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
 		);
 	);
 	

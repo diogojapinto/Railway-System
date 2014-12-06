@@ -47,11 +47,13 @@ operations
 	
 	public hasCTrain: () ==> bool
 	hasCTrain() ==
-		return train <> nil => train.dir = <CLOCKWISE>;
+		if train <> nil then return train.dir = <CLOCKWISE>
+		else return false;
 		
 	public hasCCTrain: () ==> bool
 	hasCCTrain() ==
-		return train <> nil => train.dir = <COUNTER_CLOCKWISE>;
+		if train <> nil then return train.dir = <COUNTER_CLOCKWISE>
+		else return false;
 	
 	public initSemaphores: () ==> ()
 	initSemaphores() ==
