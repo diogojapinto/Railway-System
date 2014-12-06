@@ -109,16 +109,19 @@ operations
 			while isofclass(Block, elem) do (
 				blocks := blocks ^ [elem];
 				elem := elem.nextClockwise;
-			)
+			);
+			blocks := blocks ^ [elem];
+			return exists b in set elems blocks & b.hasCCTrain();
 		)
 		else (
 			elem := station.nextCounterClockwise;
 			while isofclass(Block, elem) do (
 				blocks := blocks ^ [elem];
 				elem := elem.nextCounterClockwise;
-			)
+			);
+			blocks := blocks ^ [elem];
+			return exists b in set elems blocks & b.hasCTrain();
 		);
-		return exists b in set elems blocks & b.hasAnyTrain();
 	);
 	
 	public advanceIter: set of Train ==> ()

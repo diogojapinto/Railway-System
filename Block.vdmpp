@@ -45,6 +45,14 @@ operations
 	hasTrain(trainVar) ==
 		return train = trainVar;
 	
+	public hasCTrain: () ==> bool
+	hasCTrain() ==
+		return train <> nil => train.dir = <CLOCKWISE>;
+		
+	public hasCCTrain: () ==> bool
+	hasCCTrain() ==
+		return train <> nil => train.dir = <COUNTER_CLOCKWISE>;
+	
 	public initSemaphores: () ==> ()
 	initSemaphores() ==
 		if hasAnyTrain() then (

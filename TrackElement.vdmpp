@@ -26,6 +26,14 @@ operations
 	hasTrain(train) ==
 		is subclass responsibility;
 		
+	public hasCTrain: () ==> bool
+	hasCTrain() ==
+		is subclass responsibility;
+		
+	public hasCCTrain: () ==> bool
+	hasCCTrain() ==
+		is subclass responsibility;
+	
 	public removeTrain: Railway`Train ==> ()
 	removeTrain(train) == 
 		is subclass responsibility;
