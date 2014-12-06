@@ -148,9 +148,9 @@ operations
 			);
 			
 			if isofclass(Station, srcElem) then (
-				if train.dir = <CLOCKWISE> and dstElem.semaphoreClockwise = <GREEN> then 
+				if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) then -- AÇORES MODIFIED THIS
 					dummy := moveTrain(train, srcElem, dstElem)
-				else if train.dir = <COUNTER_CLOCKWISE> and dstElem.semaphoreCounterClockwise = <GREEN> then 
+				else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>)   then -- AÇORES MODIFIED THIS
 					dummy := moveTrain(train, srcElem, dstElem);
 				movedTrains:= movedTrains union {train}
 			)

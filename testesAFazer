@@ -5,11 +5,11 @@ Test semaphors (various scenarios)
 
 
 --Test just one train between two stations
-um numa, um noutra, sentidos opostos, pedem ambos permissão, advance iter e verificar que apenas um se move →  ✔ aquilo ta a dar uns erros estranhos que nao consigo perceber do debug
+um numa, um noutra, sentidos opostos, pedem ambos permissão, advance iter e verificar que apenas um se move →  ✔ 
 
 Test can't leave station without asking permission →  ✔
 
---Test stops at red →  http://snag.gy/nIvsf.jpg →  ver isto, ele o hasAnyTrain() esta a falhar 
+--Test stops at red →  http://snag.gy/nIvsf.jpg →  
 eles começam em estações
 meto um numa outro noutra
 no primeiro peço permissão e faço advance iter até antes da estação do outro para verificar que para no vermelho
