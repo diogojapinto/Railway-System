@@ -76,6 +76,7 @@ operations
 		IO`print(index);
 		IO`print(" in direction ");
 		IO`print(dir);
+		IO`print(".");
 		IO`print(".\n");
 		return newTrain;
 	)
@@ -167,25 +168,8 @@ operations
 				dstElem := srcElem.nextCounterClockwise;
 			);
 			
-			if isofclass(Station, srcElem) then (
-				if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) then (
-					dummy := moveTrain(train, srcElem, dstElem);
-					IO`print("Moved train ");
-					IO`print(train.id);
-					IO`print(".\n");
-				)
-				else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) then (
-					dummy := moveTrain(train, srcElem, dstElem);
-					IO`print("Moved train ");
-					IO`print(train.id);
-					IO`print(".\n");
-				);
+			if moveTrain(train, srcElem, dstElem) then
 				movedTrains:= movedTrains union {train};
-			)
-			else (
-				if moveTrain(train, srcElem, dstElem) then
-					movedTrains:= movedTrains union {train}
-			)
 		);
 		if card movedTrains = 0 then
 			return
