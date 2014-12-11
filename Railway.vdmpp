@@ -72,11 +72,12 @@ operations
 		
 		trackElements(index).placeTrain(newTrain);
 		
-		IO`print("Placed train in position ");
+		IO`print("Placed new train in position ");
 		IO`print(index);
 		IO`print(" in direction ");
 		IO`print(dir);
 		IO`print(".");
+		IO`print(".\n");
 		return newTrain;
 	)
 	pre
@@ -99,8 +100,13 @@ operations
 	public askToLeaveStation: Train ==> bool
 	askToLeaveStation(train) == (
 		dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
+		IO`print("Train ");
+		IO`print(train.id);
+		IO`print(" asking to leave station.\n");
+		
 		-- verify if there is any train in the track
 		if isTrainInFollowingBlocks(train) then
+		IO`print("Failed. Train in following block.\n");
 			return false;
 		
 		if train.dir = <CLOCKWISE> then (
@@ -115,6 +121,7 @@ operations
 			else
 				station.nextCounterClockwise.setCCSemaphore(<GREEN>)
 		);
+		IO`print("Success. Semaphores changed.\n");
 		return true;
 	);
 	------------COULD NOT IMPLEMENT------------
@@ -161,9 +168,9 @@ operations
 			);
 			
 			if isofclass(Station, srcElem) then (
-				if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) then -- AÇORES MODIFIED THIS
+				if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) then
 					dummy := moveTrain(train, srcElem, dstElem)
-				else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>)   then -- AÇORES MODIFIED THIS
+				else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) then
 					dummy := moveTrain(train, srcElem, dstElem);
 				movedTrains:= movedTrains union {train}
 			)
