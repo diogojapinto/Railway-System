@@ -209,7 +209,7 @@ operations
 		train.dir = <CLOCKWISE> => src.clockwiseTrain = train and src.nextClockwise = dst and
 		train.dir = <COUNTER_CLOCKWISE> => src.counterClockwiseTrain = train and src.nextCounterClockwise = dst;
 		
-	private moveTrain2: Train * Block * Block ==> bool
+	private moveTrain2: Train * Block * TrackElement ==> bool
 	moveTrain2(train, src, dst) == (
 		if dst.isSemaphoreRed(train.dir) then
 			return false

@@ -214,7 +214,11 @@ class RailwaySystemTest is subclass of Tester
    	  railWay.advanceIter({train,train2});
    	  
  	   	assertTrue(b4.hasAnyTrain());
+<<<<<<< HEAD
+ 	    assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar
+=======
  	   assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar
+>>>>>>> cb7435280bdc55cf1fd8d49fa3fb11ce5154499c
  		
    	);*/
    	
@@ -277,9 +281,8 @@ class RailwaySystemTest is subclass of Tester
    		assertTrue(b4.hasCTrain()); 
    		assertTrue(s2.semaphoreClockwise = <RED>); 
    		
-   		--FAILS here because it cant advance to the next station
-   		--railWay.advanceIter({train});
-   		--assertTrue(b4.hasCTrain()); 
+   		railWay.advanceIter({train});
+   		assertTrue(b4.hasCTrain()); 
    		
    	);
    	
@@ -303,9 +306,10 @@ class RailwaySystemTest is subclass of Tester
    		railWay.advanceIter({train});
    		assertTrue(b4.hasAnyTrain());
    		assertTrue(railWay.askToLeaveStation(train2));
-  	--	railWay.advanceIter({train2,train}); -- ERROR HERE 
-   	--	assertTrue(s2.hasAnyTrain());
-   	--	assertTrue(b2.hasAnyTrain());
+
+  		railWay.advanceIter({train2,train});
+   		assertTrue(s2.hasAnyTrain());
+   		assertTrue(b2.hasAnyTrain());
    	);
    	
    	-- Test "two trains in the same station ( two block per station)"
@@ -332,17 +336,20 @@ class RailwaySystemTest is subclass of Tester
     main() ==
     (
       dcl tester: RailwaySystemTest := new RailwaySystemTest();
-   -- tester.testSubsequentStations();
-   -- tester.testCloseTrack();
+
       tester.testValidRailway();
       tester.testSemaphoreBeforeStation();
       tester.testTrainPlacement();
       tester.testPermissionToLeave();
       tester.testIterTwoTrains();
-      --tester.testTrainsBetweenStations();
       tester.testStopsAtRed();
       tester.twoTrainsInStation();
       tester.PermissionNotGranted();
+      
+      
+      -- tester.testTrainsBetweenStations();
+      -- tester.testSubsequentStations();
+  	  -- tester.testCloseTrack();
     );
     
 end RailwaySystemTest
