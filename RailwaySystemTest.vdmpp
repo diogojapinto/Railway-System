@@ -1,5 +1,10 @@
 class RailwaySystemTest is subclass of Tester
 	instance variables
+ 		/*
+		* Instance all the variables used in tests:
+		* All the blocks (single rain track element) and stations (double rail track element)
+		* All trains used and helper variables
+		*/	
 		railWay : Railway := new Railway();
 		b1 : TrackElement := new Block();
 		b2 : TrackElement := new Block();
@@ -14,10 +19,11 @@ class RailwaySystemTest is subclass of Tester
    	train: Railway`Train;
    	train2: Railway`Train;
    	
-		
 	operations
-	
-    ----- Initialize all variables -----
+  	/*
+   	* ----------------- RESET VARIABLES ----------------------
+   	* Reset all variables so they can be reused in all tests without conflicts 
+   	*/
     private restartVariables: () ==> ()
     restartVariables() == 
     (
@@ -31,25 +37,22 @@ class RailwaySystemTest is subclass of Tester
 			s2 := new Station();
 			s3 := new Station();
     );
-   	
-   	
-   	
-   	
+    
    	-------------------------------
    	----- Tests meant to Succeed -----
    	-------------------------------
    	
-   	
-   	
-   	
-   	----- Test "Placing a train" -----
-   	private testTrainPlacement: () ==> ()	
+   	/*
+   	* ----------------- PLACE A TRAIN ----------------------
+   	* Create a railway with one station and check if it's possible to place a train there
+   	*/
+   	private testTrainPlacement: () ==> ()
    	testTrainPlacement() ==
    	(
-   		dcl tracks: seq of TrackElement;
-    	IO`print("\n\nTest to show train placement in a Station\n");
-    	IO`print("Train is placed in the clockwise spot and the station is confirmed to have a train.\n");   		
+   		dcl tracks: seq of TrackElement;	
    		restartVariables();
+      IO`print("\n\nTest to show the creation of a valid RailWay\n");
+      IO`print("Two stations are place separated by one block from each other in either direction.\n");           
    		railWay.appendTrackElement(b1);
    		railWay.appendTrackElement(b3);
    		railWay.appendTrackElement(s1);
@@ -59,17 +62,20 @@ class RailwaySystemTest is subclass of Tester
    		
    		train := railWay.placeTrain(3,<CLOCKWISE>);
    		assertTrue(s1.hasAnyTrain());
-   		
    	);
-    
-    ----- Test "A valid railway" -----	
+   	
+   	/*
+   	* ----------------- VALID RAILWAY ----------------------
+   	* Append four elements to a railway, close it and check its length and
+   	* that all the trackElements are in the right order
+   	*/
     private testValidRailway: () ==> ()
     testValidRailway() ==
     (
     	dcl tracks: seq of TrackElement;
-    	IO`print("\n\nTest to show the creation of a valid RailWay\n");
-    	IO`print("Two stations are place separated by one block from each other in either direction.\n");
    		restartVariables();
+      IO`print("\n\nTest to show the creation of a valid RailWay\n");
+      IO`print("Two stations are place separated by one block from each other in either direction.\n");		
     	railWay.appendTrackElement(b1);
     	railWay.appendTrackElement(s1);
     	railWay.appendTrackElement(b4);
@@ -78,12 +84,16 @@ class RailwaySystemTest is subclass of Tester
     	assertTrue(len railWay.trackElements = 4);
     	assertTrue(tracks = [b1, s1, b4, s2]);
     );
-   	
-   	-- Test "two trains in the same station ( two block per station)"
+  
+   	/*
+   	* ----------------- TWO TRAINS IN STATION ----------------------
+   	* Test to check if two trains can be inserted in the same station
+   	*/
    	private twoTrainsInStation: () ==> ()
    	twoTrainsInStation() ==
    	(
    		dcl tracks: seq of TrackElement;
+      IO`print("\n\nTest to show Station can support two trains in opposite directions\n");	
    		restartVariables();
    		
    		railWay.appendTrackElement(b1);
@@ -96,14 +106,22 @@ class RailwaySystemTest is subclass of Tester
    		train2 := railWay.placeTrain(2, <COUNTER_CLOCKWISE>);   		
    		assertTrue(s1.hasCTrain());
 			assertTrue(s1.hasCCTrain());
-
    	);
    	
-   	----- Test "There cant be 2 trains between stations ( They dont have permission to leave)" -----	
-		private testTrainsBetweenStations: () ==> ()
+   	/*
+   	* ----------------- TRAINS IN OPPOSITE DIRECTIONS  ----------------------
+   	* Create a railway with two stations and place two trains in opposite directions, 
+   	* so they're facing each other. After the first train asks for permission to leave, the system
+   	* doesn't allow the second one to ask. It won't allow him to leave the station
+   	* until the first train arrives at the station. Then, the permission will be granted
+   	* and he will leave the station.
+   	*/	 	
+   	private testTrainsBetweenStations: () ==> () 	
     testTrainsBetweenStations() ==
    	(
    		dcl tracks: seq of TrackElement;
+      IO`print("\n\nTest to show only one train can be between two stations at a given time.\n");
+      IO`print("Also shows how permission is not given when a train want to exit and another is already between stations.\n");	
    		
    		restartVariables();
    		
@@ -136,18 +154,25 @@ class RailwaySystemTest is subclass of Tester
  			assertTrue(b4.hasTrain(train2));
  	   	assertTrue(s2.hasTrain(train));
    	);
-   	
-   	----- Test "Two trains in the track advancing an iteration, in two different directions
+   	   	
+   	/*
+   	* ----------------- TRAINS MOVING IN RAILWAY  ----------------------
+   	* Create a railway with three stations and place two trains in opposite directions, 
+   	* so they're NOT facing each other. The two trains ask permission to leave and advance
+   	* normally to the block ahead of them. There are stations between the two trains, so they 
+   	* can move normally in opposite directions
+   	*/	 	 	 
    	private testIterTwoTrains: () ==> ()
    	testIterTwoTrains() ==
    	(
    		dcl tracks: seq of TrackElement;
+      IO`print("\n\nTest to show if two trains only meet at stations they can move in opposite directions without stopping.\n");	
    		
    		restartVariables();
    		
    		railWay.appendTrackElement(b1);
-   		railWay.appendTrackElement(b3);
    		railWay.appendTrackElement(s3);
+   		railWay.appendTrackElement(b3);
    		railWay.appendTrackElement(b2);
    		railWay.appendTrackElement(s1);
    		railWay.appendTrackElement(b4);
@@ -164,12 +189,17 @@ class RailwaySystemTest is subclass of Tester
    	
    		railWay.advanceIter({train,train2});
 
- 	   	assertTrue(b2.hasAnyTrain());
- 	   	assertTrue(b1.hasAnyTrain());
-   	);
-    
-    ----- Test "Semaphores colors in a empty track" -----	
-    private testSemaphoreEmptyTrack: () ==> ()
+ 	   	assertTrue(b2.hasTrain(train));
+ 	   	assertTrue(b1.hasTrain(train2));
+   	);   	
+   	   	
+   	/*
+   	* ----------------- SEMAPHORES IN EMPTY TRACK ----------------------
+   	* Create a railway with two stations and check if the semaphores.
+   	* before entering one of them are YELLOW, the semaphores at the station are (always) RED.
+   	* and at an unocupied track are GREEN. There are no trains in the track.
+   	*/
+   	private testSemaphoreEmptyTrack: () ==> ()
     testSemaphoreEmptyTrack() ==
    	(
    		dcl tracks: seq of TrackElement;
@@ -198,33 +228,22 @@ class RailwaySystemTest is subclass of Tester
    		
    		assertTrue(b4.semaphoreClockwise = <RED>);
    		assertTrue(b4.semaphoreCounterClockwise = <RED>);
-   	);
-    
-		----- Test "Semaphores YELLOW before a station" -----	
-		private testSemaphoreBeforeStation: () ==> ()
+   		
+   		assertTrue(s1.semaphoreClockwise = <YELLOW>);
+   		assertTrue(s1.semaphoreCounterClockwise = <YELLOW>);
+   	);   	
+   	   	
+   	/*
+  	* ----------------- SEMAPHORES BEFORE STATION ----------------------
+  	* Create a railway with one station and check if the semaphores
+  	* before entering the station are yellow to warn trains that the next ones are red
+   	*/
+   	private testSemaphoreBeforeStation: () ==> ()
 		testSemaphoreBeforeStation() ==
    	(
    		dcl tracks: seq of TrackElement;
-    	IO`print("\n\nTest to show the semaphore is always yellow before a station, unless it's the first block after a station.\n");
-    	IO`print("Structured this way because a semaphore after a station is always red until a train asks permission to leave that station.\n");
-   		restartVariables();
-   		railWay.appendTrackElement(b1);
-   		railWay.appendTrackElement(b2);
-   		railWay.appendTrackElement(s1);
-   		railWay.appendTrackElement(b4);
-   		railWay.appendTrackElement(s2);
-   		tracks := railWay.closeTrack();
-   		assertTrue(b2.semaphoreClockwise = <YELLOW>);
-   		assertTrue(b4.semaphoreClockwise = <RED>); -- Red because it's after a station
-   		assertTrue(b2.semaphoreCounterClockwise = <RED>); -- Red because it's after a station
-   		assertTrue(b1.semaphoreCounterClockwise = <YELLOW>);
-   	);
-   	
-   	----- Test "Semaphores colors with a train in the track" -----	
-   	private testSemaphoreTrains: () ==> () 
-   	testSemaphoreTrains() ==
-   	(
-   		dcl tracks: seq of TrackElement;
+      IO`print("\n\nTest to show the semaphore is always yellow before a station, unless it's the first block after a station.\n");
+      IO`print("Structured this way because a semaphore after a station is always red until a train asks permission to leave that station.\n");
    		
    		restartVariables();
    		railWay.appendTrackElement(b1);
@@ -234,27 +253,50 @@ class RailwaySystemTest is subclass of Tester
    		railWay.appendTrackElement(b4);
    		railWay.appendTrackElement(s2);
    		tracks := railWay.closeTrack();
+   		
    		train := railWay.placeTrain(4, <CLOCKWISE>);
+   		train2 := railWay.placeTrain(6, <COUNTER_CLOCKWISE>);   		
    		
-   		assertTrue(s1.semaphoreClockwise = <RED>);
-   		assertTrue(s1.semaphoreCounterClockwise = <YELLOW>);
-   		
+ 	   	assertTrue(s1.hasAnyTrain());
+ 	   	assertTrue(s2.hasAnyTrain());
+   		assertTrue(railWay.askToLeaveStation(train));
+   	
+   		assertFalse(railWay.askToLeaveStation(train2)); 
+   	
+   	  railWay.advanceIter({train,train2});
+   	  
+ 	   	assertTrue(b4.hasTrain(train));
+ 	   	assertTrue(s2.hasTrain(train2));
+ 	   	
+ 	    assertFalse(railWay.askToLeaveStation(train2));
+			railWay.advanceIter({train,train2});
+ 			assertTrue(railWay.askToLeaveStation(train2));
+ 			railWay.advanceIter({train,train2});
+ 			
+ 			assertTrue(b4.hasTrain(train2));
+ 	   	assertTrue(s2.hasTrain(train));
    		assertTrue(b2.semaphoreClockwise = <YELLOW>);
-   		assertTrue(b2.semaphoreCounterClockwise = <RED>);
-   		
-   		assertTrue(b3.semaphoreClockwise = <GREEN>);
-   		assertTrue(b3.semaphoreCounterClockwise = <GREEN>);
-   		
-   		assertTrue(b4.semaphoreClockwise = <RED>);
-   		assertTrue(b4.semaphoreCounterClockwise = <RED>);
-   		
+      assertTrue(b4.semaphoreClockwise = <RED>); -- Red because it's after a station
+      assertTrue(b2.semaphoreCounterClockwise = <RED>); -- Red because it's after a station
+      assertTrue(b1.semaphoreCounterClockwise = <YELLOW>);
    	);
    	
-   	----- Test "Semaphores is red before entering a station where is a train there already " -----	
+   	/*
+   	* ----------------- TRAIN STOPS AT RED ----------------------
+   	* Create a railway with two stations and place two trains in the same direction, 
+   	* one on each station, with just one block in the middle. The first train asks to leave station and
+   	* the semaphore turns YELLOW, has there a train 1one block ahead. After the first train have 
+	 	* advanced, the semaphore is RED because there's a train ahead. When you advance
+	 	* one iteration, the train doesn't move.
+   	*/	
    	private testStopsAtRed: () ==> ()
   	testStopsAtRed() ==
    	(
    		dcl tracks: seq of TrackElement;
+      IO`print("\n\nTest to show that if there are two stations separated by one block with trains on both facing the ");
+      IO`print("same direction, if the train on the first station asks to leave the sign turns yellow because there is ");
+      IO`print("a train one block ahead. After moving the semaphore ahead is now red because there is a train in that station. ");
+      IO`print("If an iteration advance is called again the train won't move\n");
    		
    		restartVariables();
    		railWay.appendTrackElement(b1);
@@ -281,14 +323,22 @@ class RailwaySystemTest is subclass of Tester
    		
    		railWay.advanceIter({train});
    		assertTrue(b4.hasCTrain()); 
-   		
    	);
-   	 
-   	----- Test "Semaphores colors when a train asks to leave the station" -----	
-   	private testPermissionToLeave: () ==> () 	
+   	
+   	/*
+   	* ----------------- PERMISSION TO LEAVE ----------------------
+   	* Create a railway with two stations and check if the clockwise semaphore
+   	* before entering the occupied station is RED, the semaphores to leave the station are (always) RED
+   	* and at a unocupied track are GREEN. When the train asks permission to leave the station,
+   	* the semaphore changes to GREEN, alowing him to leave the station, turning back to RED
+   	* after he leaves the station
+   	*/	 	 
    	testPermissionToLeave() ==
    	(
    		dcl tracks: seq of TrackElement;
+      IO`print("\n\nTest to show that if a train is in the station the semaphore is always RED, ");
+      IO`print("if he asks to leave it turns green (provided there are no trains ahead), and ");
+      IO`print("if he leaves the station it turns red again.");
    		
    		restartVariables();
    		railWay.appendTrackElement(b1);
@@ -316,41 +366,27 @@ class RailwaySystemTest is subclass of Tester
    		
    		assertTrue(b4.semaphoreClockwise = <GREEN>);  		
    		railWay.advanceIter({train}); 	
-   		assertTrue(b4.semaphoreClockwise = <RED>);  		
+   		assertTrue(b4.semaphoreClockwise = <RED>);  
+   		
    	);
    	
-   	-- Train asks permission but is not granted because it has a train ahead
-   	private permissionNotGranted: () ==> ()
-   	permissionNotGranted() ==
-   	(
-   		dcl tracks: seq of TrackElement;
-   		
-   		restartVariables();
-   		railWay.appendTrackElement(b1);
-   		railWay.appendTrackElement(s1);
-   		railWay.appendTrackElement(b4);
-   		railWay.appendTrackElement(s2);
-   		railWay.appendTrackElement(b2);
-   		
-   		tracks := railWay.closeTrack();  
-   		
-   		train := railWay.placeTrain(2, <CLOCKWISE>);
-   		train2 := railWay.placeTrain(4, <COUNTER_CLOCKWISE>);   		
-   		assertTrue(railWay.askToLeaveStation(train));
-   		railWay.advanceIter({train});
-   		assertTrue(b4.hasAnyTrain());
-   		assertFalse(railWay.askToLeaveStation(train2));
-
-  		railWay.advanceIter({train2,train});
-   		assertTrue(s2.hasTrain(train));
-   		assertTrue(s2.hasTrain(train2));
-   	);
    	
-   	----- Test "Two trains in the track advancing an iteration, in two different directions
-   	private test2TrainsRow: () ==> ()
+   	/*
+   	* ----------------- TRAINS MOVING IN THE SAME DIRECTION ----------------------
+   	* Create a railway with two stations and place two trains in the same direction, 
+   	* one on each station. The first train asks to leave station and advances the next iteration.
+   	* Just one train has moved, as the second train didn't ask for permission. Then the 2nd
+   	* train asks for permission to leave. Then the two trains move normally. Finally, has the
+   	* first train which had stopped in the station, asks for permission, and advancing the two trains move
+   	* ahead, in adjoin trackElements.
+   	*/	 
    	test2TrainsRow() ==
    	(
    		dcl tracks: seq of TrackElement;
+      IO`print("\n\nTest to show that if a train is in the station the semaphore is always RED, ");
+      IO`print("if he asks to leave it turns green (provided there are no trains ahead), and ");
+      IO`print("if he leaves the station it turns red again.");
+   		
    		restartVariables();
    		
    		railWay.appendTrackElement(b1);
@@ -359,83 +395,65 @@ class RailwaySystemTest is subclass of Tester
    		railWay.appendTrackElement(s1);
    		railWay.appendTrackElement(b4);
    		railWay.appendTrackElement(b3);
-   		
    		tracks := railWay.closeTrack();
+   		
    		train := railWay.placeTrain(2, <CLOCKWISE>);
-   		train2 := railWay.placeTrain(4, <CLOCKWISE>);
+   		train2 := railWay.placeTrain(4, <CLOCKWISE>);   		
    		
-   		assertTrue(s3.hasAnyTrain());
-   		assertTrue(s1.hasAnyTrain());
+ 	   	assertTrue(s3.hasAnyTrain());
+ 	   	assertTrue(s1.hasAnyTrain());
    		assertTrue(railWay.askToLeaveStation(train));
-   		
+  	
    		railWay.advanceIter({train,train2});
-   		
-   		assertTrue(b2.hasAnyTrain());
-   		assertTrue(railWay.askToLeaveStation(train2));
-   		
-   		railWay.advanceIter({train,train2});
-   		
-   		assertTrue(s1.hasAnyTrain());
-   		assertTrue(b4.hasAnyTrain());
-   		assertTrue(railWay.askToLeaveStation(train));
-   		
-   		railWay.advanceIter({train,train2}); 
-   		
-   		-- O semaforo esta verde porque se o comboio da frente andar, ele tambem vai poder andar 
-   		-- logo o askto leave station tem de pintar 
-   		assertTrue(b4.hasAnyTrain()); 
-   		assertTrue(b3.hasAnyTrain()); 
- 		
+ 	   	assertTrue(b2.hasAnyTrain());
+ 	   	assertTrue(railWay.askToLeaveStation(train2));
+ 	   	
+ 	   	railWay.advanceIter({train,train2});
+ 	   	
+ 	   	assertTrue(s1.hasAnyTrain());
+ 	   	assertTrue(b4.hasAnyTrain());
+ 	   	
+ 	   	assertTrue(railWay.askToLeaveStation(train));
+ 	   	
+ 	   	railWay.advanceIter({train,train2});
+ 	   	
+ 	   	assertTrue(b4.hasAnyTrain());
+ 	   	assertTrue(b3.hasAnyTrain());
    	);
-   	
-   	
-   	
-   	
+   		
    	-------------------------------
    	----- Tests meant to Fail -----
    	-------------------------------
    	
    	
-   	
-   	
-   	 ----- Test "Cant append two adjacent stations" 	-----
+   	/*
+   	* ----------------- TWO SUBSEQUENT STATIONS ----------------------
+   	* Append two stations in a row, which isn't possible
+   	* -- SUPPOSED TO FAIL
+   	*/
     private testSubsequentStations: () ==> ()
     testSubsequentStations() ==
     (
-    	IO`print("\n\nTest to prove two stations can't be placed next to each other without a block between them.\n");
-    	IO`print("Precondition in appendTrackElement fails because if the previous track element is a station the next track element cannot be a station.\n");
-    	restartVariables();
+      IO`print("\n\nTest to prove two stations can't be placed next to each other without a block between them.\n");
+      IO`print("Precondition in appendTrackElement fails because if the previous track element is a station the next track element cannot be a station.\n");    	
     	railWay.appendTrackElement(b1);
     	railWay.appendTrackElement(s1);
     	railWay.appendTrackElement(s2);
     );
-
-  
-   ----- Test " Cant close track with one station in the beginning and other and the end ( two adjacent stations)  -----
+   	
+   	/*
+   	* ----------------- CLOSE TRACK ----------------------
+   	* Close a track with stations on both ends, which isn't possible, because there will be two adjoin stations
+   	* -- SUPPOSED TO FAIL
+   	*/
     private testCloseTrack: () ==> ()
     testCloseTrack() ==
-   	(
-   		dcl tracks: seq of TrackElement;
-    	IO`print("\n\nTest to prove you can't close a track with stations on both ends. closeTrack connects the last element in the sequence of track elements to the first one.\n");
-    	IO`print("Invariants in lines 10 and 11 in the Station file state a station must be surrounded by blocks.\n");
+    (
+    	dcl tracks: seq of TrackElement;
    		restartVariables();
+      IO`print("\n\nTest to prove you can't close a track with stations on both ends. closeTrack connects the last element in the sequence of track elements to the first one.\n");
+      IO`print("Invariants in lines 10 and 11 in the Station file state a station must be surrounded by blocks.\n");   		
    		railWay.appendTrackElement(s1);
-   		railWay.appendTrackElement(b1);
-   		railWay.appendTrackElement(b4);
-  		railWay.appendTrackElement(s2);
- 			tracks := railWay.closeTrack();
- 			
-   	);
-   	
-   	----- Test "Placing a train" -----	
-   	private testTrainPlacementFail: () ==> ()
-   	testTrainPlacementFail() ==
-   	(
-   		dcl tracks: seq of TrackElement;
-    	IO`print("\n\nTest to show train placement in a Block.\n");
-    	IO`print("Test fails because trains must be placed at stations, only being able to move to Blocks\n");  
-    	IO`print("Fails at precondition in placeTrain stating the class of the TrackElement the train is being place in must be Station\n");  		
-   		restartVariables();
    		railWay.appendTrackElement(b1);
    		railWay.appendTrackElement(b3);
    		railWay.appendTrackElement(s1);
@@ -443,29 +461,48 @@ class RailwaySystemTest is subclass of Tester
    		railWay.appendTrackElement(b5);
    		tracks := railWay.closeTrack();
    		
-   		train := railWay.placeTrain(1,<CLOCKWISE>); -- Fails here because you can't place train in block
+   		train := railWay.placeTrain(3,<CLOCKWISE>);
    		assertTrue(s1.hasAnyTrain());
    		
    	);
-   	
+
+		/*	
+		* ----------------- TRAIN PLACEMENT FAILS ----------------------
+		* Tests placing a train on a Block.
+		* -- SUPPOSED TO FAIL   
+		*/
+   	testTrainPlacementFail() ==
+   	(
+     	dcl tracks: seq of TrackElement;
+     	IO`print("\n\nTest to show the creation of a valid RailWay\n");
+     	IO`print("Two stations are place separated by one block from each other in either direction.\n");           
+     	restartVariables();
+     	railWay.appendTrackElement(b1);
+     	railWay.appendTrackElement(b3);
+     	railWay.appendTrackElement(s1);
+     	railWay.appendTrackElement(b4);
+     	railWay.appendTrackElement(b5);
+     	tracks := railWay.closeTrack();
+           
+     	train := railWay.placeTrain(1,<CLOCKWISE>); -- Fails here because you can't place train in block
+     	assertTrue(s1.hasAnyTrain());          
+    );    
    	
     public static main: () ==> ()
     main() ==
     (
       dcl tester: RailwaySystemTest := new RailwaySystemTest();
       
-      -- tester.testTrainPlacement();
-      -- tester.testValidRailway();
-      -- tester.twoTrainsInStation(); 
-			-- tester.testTrainsBetweenStations(); 
-      -- tester.testIterTwoTrains();
-			-- tester.testSemaphoreEmptyTrack();  
-			-- tester.testSemaphoreBeforeStation();
-			-- tester.testSemaphoreTrains();
-      -- tester.testStopsAtRed();  
-      -- tester.testPermissionToLeave();
-      -- tester.permissionNotGranted();
-      -- tester.test2TrainsRow();
+       tester.testTrainPlacement();
+       tester.testValidRailway();
+       tester.twoTrainsInStation(); 
+			 tester.testTrainsBetweenStations(); 
+       tester.testIterTwoTrains();
+			 tester.testSemaphoreEmptyTrack();  
+			 tester.testSemaphoreBeforeStation();
+       tester.testStopsAtRed();  
+       tester.testPermissionToLeave();
+       tester.test2TrainsRow();
       
       ------------------------------------------------------
       -- Uncomment a test call, one by one, to prove failure
@@ -473,7 +510,7 @@ class RailwaySystemTest is subclass of Tester
       
       -- tester.testSubsequentStations();
   	  -- tester.testCloseTrack();
-       tester.testTrainPlacementFail();
+      -- tester.testTrainPlacementFail();
     );
     
 end RailwaySystemTest

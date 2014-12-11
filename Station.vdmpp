@@ -34,16 +34,14 @@ operations
 		if clockwiseTrain = train then (
 			clockwiseTrain := nil;
 			if nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
-				setCSemaphore(<YELLOW>)
-			else
-				setCSemaphore(<GREEN>);
+				setCSemaphore(<YELLOW>);
+			-- semaphores in stations never get green
 		)
 		else (-- if counterClockwiseTrain = train then
 			counterClockwiseTrain := nil;
 			if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
 				setCCSemaphore(<YELLOW>)
-			else
-				setCCSemaphore(<GREEN>)
+			-- semaphores in stations never get green
 		)
 	pre
 			-- train exists in sets of trains
@@ -72,19 +70,9 @@ operations
 	-- Initialize semaphores of the track
 	public initSemaphores: () ==> ()
 	initSemaphores() == (
-		if hasCTrain() then
-				setCSemaphore(<RED>)
-		else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
-				setCSemaphore(<YELLOW>)
-		else
-				setCSemaphore(<GREEN>);
-		
-		if hasCCTrain() then
-				setCCSemaphore(<RED>)
-		else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
-				setCCSemaphore(<YELLOW>)
-		else
-				setCCSemaphore(<GREEN>);
+		-- semaphores never get red nor green initially, as there are no trains
+		setCSemaphore(<YELLOW>);
+		setCCSemaphore(<YELLOW>);
 	)
 functions		
 traces
