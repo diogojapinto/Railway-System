@@ -32,9 +32,8 @@ operations
 			else
 				setCSemaphore(<YELLOW>);
 		) else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
-			setCSemaphore(<YELLOW>)
-		else
-			setCSemaphore(<GREEN>);
+			setCSemaphore(<YELLOW>);
+			-- if train is removed, it is adjacent to this block (it moved)
 		
 		if isofclass(Station, nextCounterClockwise) then (
 			if isofclass(Station, nextClockwise) then
@@ -42,9 +41,8 @@ operations
 			else
 				setCCSemaphore(<YELLOW>);
 		) else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
-			setCCSemaphore(<YELLOW>)
-		else
-			setCCSemaphore(<GREEN>);
+			setCCSemaphore(<YELLOW>);
+			-- if train is removed, it is adjacent to this block (it moved)
 	)
 	pre
 		train = trainVar;

@@ -4,8 +4,7 @@ class RailwaySystemTest2 is subclass of Tester
 	* Istance all variables used in tests
 	* All the trackElements, including blocks, that are a standard rail, and stations with two rails
 	* All trains used and helper variables
-	*/
-	
+	*/	
 		railWay : Railway := new Railway();
 		b1 : TrackElement := new Block();
 		b2 : TrackElement := new Block();
