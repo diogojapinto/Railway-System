@@ -167,8 +167,14 @@ operations
             dstElem := srcElem.nextCounterClockwise;
           );
                        
-          if moveTrain(train, srcElem, dstElem) then
+          if moveTrain(train, srcElem, dstElem) then (
+          	IO`print("Train ");
+          	IO`print(train.id);
+          	IO`print(" moved ");
+          	IO`print(train.dir);
+          	IO`print(".\n");
             movedTrains:= movedTrains union {train}
+          )
                        
           --if isofclass(Station, srcElem) then (
           --  if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) and not dstElem.hasAnyTrain() then
