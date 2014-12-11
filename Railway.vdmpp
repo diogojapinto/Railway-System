@@ -105,9 +105,10 @@ operations
 		IO`print(" asking to leave station.\n");
 		
 		-- verify if there is any train in the track
-		if isTrainInFollowingBlocks(train) then
-		IO`print("Failed. Train in following block.\n");
+		if isTrainInFollowingBlocks(train) then (
+			IO`print("Failed. Train in following block.\n");
 			return false;
+		);
 		
 		if train.dir = <CLOCKWISE> then (
 			if station.nextClockwise.nextClockwise.isSemaphoreRed(<CLOCKWISE>) then

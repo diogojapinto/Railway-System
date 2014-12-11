@@ -347,6 +347,10 @@ class RailwaySystemTest is subclass of Tester
       tester.PermissionNotGranted();
       
       
+      ------------------------------------------------------
+      -- Uncomment a test call, one by one, to prove failure
+      ------------------------------------------------------
+      
       -- tester.testTrainsBetweenStations();
       -- tester.testSubsequentStations();
   	  -- tester.testCloseTrack();
