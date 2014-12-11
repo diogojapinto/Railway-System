@@ -140,7 +140,7 @@ operations
 				blocks := blocks ^ [elem];
 				elem := elem.nextClockwise;
 			);
-			return exists b in set elems blocks & b.hasCCTrain() and not blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
+			return exists b in set elems blocks & b.hasCCTrain() or not blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
 		)
 		else (
 			elem := station.nextCounterClockwise;
@@ -149,7 +149,7 @@ operations
 				elem := elem.nextCounterClockwise;
 			);
 			-- verify if there is any train comming or if last block accepts the train to exit
-			return exists b in set elems blocks & b.hasCTrain() and not blocks(len blocks).isSemaphoreRed(<CLOCKWISE>);
+			return exists b in set elems blocks & b.hasCTrain() or not blocks(len blocks).isSemaphoreRed(<CLOCKWISE>);
 		);
 	);
 	
@@ -168,17 +168,20 @@ operations
 				dstElem := srcElem.nextCounterClockwise;
 			);
 			
-			if isofclass(Station, srcElem) then (
-				if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) then
-					dummy := moveTrain(train, srcElem, dstElem)
-				else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) then
-					dummy := moveTrain(train, srcElem, dstElem);
+			if moveTrain(train, srcElem, dstElem) then
 				movedTrains:= movedTrains union {train}
-			)
-			else (
-				if moveTrain(train, srcElem, dstElem) then
-					movedTrains:= movedTrains union {train}
-			)
+			
+			--if isofclass(Station, srcElem) then (
+			--	if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) and not dstElem.hasAnyTrain() then
+			--		dummy := moveTrain(train, srcElem, dstElem)
+			--	else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) and not dstElem.hasAnyTrain() then
+			--		dummy := moveTrain(train, srcElem, dstElem);
+			--	movedTrains:= movedTrains union {train}
+			--)
+			--else (
+			--	if moveTrain(train, srcElem, dstElem) then
+			--		movedTrains:= movedTrains union {train}
+			--)
 		);
 		if card movedTrains = 0 then
 			return
@@ -198,7 +201,7 @@ operations
 		
 	private moveTrain1: Train * Station * Block ==> bool
 	moveTrain1(train, src, dst) == (
-		if dst.isSemaphoreRed(train.dir) then
+		if dst.isSemaphoreRed(train.dir) and dst.hasAnyTrain() then
 			return false
 		else (
 			dst.placeTrain(train);
