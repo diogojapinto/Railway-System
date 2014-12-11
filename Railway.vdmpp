@@ -169,19 +169,7 @@ operations
 			);
 			
 			if moveTrain(train, srcElem, dstElem) then
-				movedTrains:= movedTrains union {train}
-			
-			--if isofclass(Station, srcElem) then (
-			--	if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) and not dstElem.hasAnyTrain() then
-			--		dummy := moveTrain(train, srcElem, dstElem)
-			--	else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) and not dstElem.hasAnyTrain() then
-			--		dummy := moveTrain(train, srcElem, dstElem);
-			--	movedTrains:= movedTrains union {train}
-			--)
-			--else (
-			--	if moveTrain(train, srcElem, dstElem) then
-			--		movedTrains:= movedTrains union {train}
-			--)
+				movedTrains:= movedTrains union {train};
 		);
 		if card movedTrains = 0 then
 			return
@@ -201,7 +189,7 @@ operations
 		
 	private moveTrain1: Train * Station * Block ==> bool
 	moveTrain1(train, src, dst) == (
-	-- 
+	-- verifies not only if semaphore of next block is red, but also if it is green only because we asked permission
 		if dst.isSemaphoreRed(train.dir) or dst.hasAnyTrain() then
 			return false
 		else (
