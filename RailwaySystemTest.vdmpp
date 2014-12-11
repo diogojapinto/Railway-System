@@ -215,11 +215,16 @@ class RailwaySystemTest is subclass of Tester
    	
    	  railWay.advanceIter({train,train2});
    	  
- 	   	assertTrue(b4.hasCTrain());
+ 	   	assertTrue(b4.hasTrain(train));
+ 	   	assertTrue(s2.hasTrain(train2));
  	   	
  	    assertFalse(railWay.askToLeaveStation(train2));
-
- 		
+			railWay.advanceIter({train,train2});
+ 			assertTrue(railWay.askToLeaveStation(train2));
+ 			railWay.advanceIter({train,train2});
+ 			
+ 			assertTrue(b4.hasTrain(train2));
+ 	   	assertTrue(s2.hasTrain(train));
    	);
    	
    	 ----- Test "Two trains in the track advancing an iteration, in two different directions
