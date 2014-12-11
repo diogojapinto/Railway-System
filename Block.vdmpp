@@ -36,7 +36,9 @@ operations
 			setCCSemaphore(<GREEN>);
 	)
 	pre
-		train = trainVar;
+		train = trainVar
+	post
+		semaphoreClockwise <> <RED> and semaphoreCounterClockwise <> <RED>;
 	
 	public hasAnyTrain: () ==> bool
 	hasAnyTrain() ==
@@ -58,27 +60,23 @@ operations
 	
 	----- initializes all semaphores -----
 	public initSemaphores: () ==> ()
-	initSemaphores() ==
-		if hasAnyTrain() then (
-			setCSemaphore(<RED>);
-			setCCSemaphore(<RED>);
+	initSemaphores() == (
+		if isofclass(Station, nextCounterClockwise) then
+			setCSemaphore(<RED>)
+		else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) or isofclass(Station, nextClockwise) then (
+			setCSemaphore(<YELLOW>);
 		)
-		else (
-			if isofclass(Station, nextCounterClockwise) then
-				setCSemaphore(<RED>)
-			else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) or isofclass(Station, nextClockwise) then (
-				setCSemaphore(<YELLOW>);
-			)
-			else
-				setCSemaphore(<GREEN>);
-		
-			if isofclass(Station, nextClockwise) then
-				setCCSemaphore(<RED>)
-			else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) or isofclass(Station, nextCounterClockwise) then
-				setCCSemaphore(<YELLOW>)
-			else 
-				setCCSemaphore(<GREEN>);
+		else
+			setCSemaphore(<GREEN>);
+					if isofclass(Station, nextClockwise) then
+			setCCSemaphore(<RED>)
+		else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) or isofclass(Station, nextCounterClockwise) then
+			setCCSemaphore(<YELLOW>)
+		else 
+			setCCSemaphore(<GREEN>);
 		)
+		pre
+			train = nil;
 		
 functions
 traces
