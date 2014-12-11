@@ -38,34 +38,30 @@ class RailwaySystemTest is subclass of Tester
     (
     	railWay.appendTrackElement(b1);
     	railWay.appendTrackElement(s1);
-    	trap exception
-    	with testRes := false
-    	in railWay.appendTrackElement(s2);
-    	testRes := true;
-    )
-    post testRes = true;
+    	railWay.appendTrackElement(s2);
+    );
+
   
    ----- Test " Cant close track with one station in the beginning and other and the end ( two adjacent stations)  -----
     private testCloseTrack: () ==> ()
     testCloseTrack() ==
    	(
+   		dcl tracks: seq of TrackElement;
+   		restartVariables();
    		railWay.appendTrackElement(s1);
    		railWay.appendTrackElement(b1);
    		railWay.appendTrackElement(b4);
   		railWay.appendTrackElement(s2);
-    	trap exception
-    	with testRes := false
-    	in dummy := railWay.closeTrack();
-    	testRes := true;
-   	)
-    post testRes = true;
+ 			tracks := railWay.closeTrack();
+ 			
+   	);
     
     ----- Test "A valid railway" -----	
     private testValidRailway: () ==> ()
     testValidRailway() ==
     (
     	dcl tracks: seq of TrackElement;
-   		railWay := new Railway();
+   		restartVariables();
     	railWay.appendTrackElement(b1);
     	railWay.appendTrackElement(s1);
     	railWay.appendTrackElement(b4);
@@ -79,7 +75,7 @@ class RailwaySystemTest is subclass of Tester
 		testSemaphoreBeforeStation() ==
    	(
    		dcl tracks: seq of TrackElement;
-   		railWay := new Railway();
+   		restartVariables();
    		railWay.appendTrackElement(b1);
    		railWay.appendTrackElement(b2);
    		railWay.appendTrackElement(s1);
@@ -94,7 +90,7 @@ class RailwaySystemTest is subclass of Tester
    	(
    		dcl tracks: seq of TrackElement;
    		
-   		railWay := new Railway();
+   		restartVariables();
    		railWay.appendTrackElement(b1);
    		railWay.appendTrackElement(b3);
    		railWay.appendTrackElement(s1);
@@ -112,7 +108,7 @@ class RailwaySystemTest is subclass of Tester
    	(
    		dcl tracks: seq of TrackElement;
    		
-   		railWay := new Railway();
+   		restartVariables();
    		railWay.appendTrackElement(b1);
    		railWay.appendTrackElement(b3);
    		railWay.appendTrackElement(b2);
@@ -136,7 +132,7 @@ class RailwaySystemTest is subclass of Tester
    	(
    		dcl tracks: seq of TrackElement;
    		
-   		railWay := new Railway();
+   		restartVariables();
    		railWay.appendTrackElement(b1);
    		railWay.appendTrackElement(b3);
    		railWay.appendTrackElement(b2);
@@ -193,7 +189,7 @@ class RailwaySystemTest is subclass of Tester
    	);
     
      ----- Test "There cant be 2 trains between stations ( They dont have permission to leave)" -----	
-    	testTrainsBetweenStations() ==
+/*    	testTrainsBetweenStations() ==
    	(
    		dcl tracks: seq of TrackElement;
    		
@@ -218,9 +214,13 @@ class RailwaySystemTest is subclass of Tester
    	  railWay.advanceIter({train,train2});
    	  
  	   	assertTrue(b4.hasAnyTrain());
+<<<<<<< HEAD
  	    assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar
+=======
+ 	   assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar
+>>>>>>> cb7435280bdc55cf1fd8d49fa3fb11ce5154499c
  		
-   	);
+   	);*/
    	
    	 ----- Test "Two trains in the track advancing an iteration, in two different directions ERROR!!!!!!!!!!!!" -----	
    	  testIterTwoTrains() ==
@@ -278,7 +278,7 @@ class RailwaySystemTest is subclass of Tester
    		assertTrue(b4.semaphoreClockwise = <YELLOW>);   
    		
    		railWay.advanceIter({train});
-   		assertTrue(b4.hasCTrain());
+   		assertTrue(b4.hasCTrain()); 
    		assertTrue(s2.semaphoreClockwise = <RED>); 
    		
    		railWay.advanceIter({train});
@@ -306,7 +306,8 @@ class RailwaySystemTest is subclass of Tester
    		railWay.advanceIter({train});
    		assertTrue(b4.hasAnyTrain());
    		assertTrue(railWay.askToLeaveStation(train2));
-  		railWay.advanceIter({train2,train}); -- ERROR HERE 
+
+  		railWay.advanceIter({train2,train});
    		assertTrue(s2.hasAnyTrain());
    		assertTrue(b2.hasAnyTrain());
    	);
@@ -325,7 +326,6 @@ class RailwaySystemTest is subclass of Tester
  	
    		train := railWay.placeTrain(2, <CLOCKWISE>);
    		train2 := railWay.placeTrain(2, <COUNTER_CLOCKWISE>);   		
-   		
    		assertTrue(s1.hasCTrain());
 			assertTrue(s1.hasCCTrain());
 
@@ -347,6 +347,8 @@ class RailwaySystemTest is subclass of Tester
       
       
       -- tester.testTrainsBetweenStations();
+      -- tester.testSubsequentStations();
+  	  -- tester.testCloseTrack();
     );
     
 end RailwaySystemTest
