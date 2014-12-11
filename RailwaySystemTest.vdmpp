@@ -336,6 +336,7 @@ class RailwaySystemTest is subclass of Tester
     main() ==
     (
       dcl tester: RailwaySystemTest := new RailwaySystemTest();
+
       tester.testValidRailway();
       tester.testSemaphoreBeforeStation();
       tester.testTrainPlacement();
