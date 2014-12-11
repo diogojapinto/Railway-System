@@ -185,11 +185,13 @@ class RailwaySystemTest is subclass of Tester
    		
    		assertTrue(railWay.askToLeaveStation(train));
    		
-   		assertTrue(b4.semaphoreClockwise = <GREEN>);   		
+   		assertTrue(b4.semaphoreClockwise = <GREEN>);  		
+   		railWay.advanceIter({train}); 	
+   		assertTrue(b4.semaphoreClockwise = <RED>);  		
    	);
     
      ----- Test "There cant be 2 trains between stations ( They dont have permission to leave)" -----	
-/*    	testTrainsBetweenStations() ==
+    	testTrainsBetweenStations() ==
    	(
    		dcl tracks: seq of TrackElement;
    		
@@ -209,18 +211,16 @@ class RailwaySystemTest is subclass of Tester
  	   	assertTrue(s2.hasAnyTrain());
    		assertTrue(railWay.askToLeaveStation(train));
    	
-   		assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar porque so 1 pode pedir autorizacao
+   		assertFalse(railWay.askToLeaveStation(train2)); -- e suposto falhar porque so 1 pode pedir autorizacao
    	
-   	  railWay.advanceIter({train,train2});
+   	  --railWay.advanceIter({train,train2});
    	  
- 	   	assertTrue(b4.hasAnyTrain());
-<<<<<<< HEAD
- 	    assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar
-=======
- 	   assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar
->>>>>>> cb7435280bdc55cf1fd8d49fa3fb11ce5154499c
+ 	   	--assertTrue(b4.hasCTrain());
+ 	   	
+ 	    --assertFalse(railWay.askToLeaveStation(train2)); -- e suposto falhar
+
  		
-   	);*/
+   	);
    	
    	 ----- Test "Two trains in the track advancing an iteration, in two different directions ERROR!!!!!!!!!!!!" -----	
    	  testIterTwoTrains() ==
@@ -351,7 +351,7 @@ class RailwaySystemTest is subclass of Tester
       -- Uncomment a test call, one by one, to prove failure
       ------------------------------------------------------
       
-      -- tester.testTrainsBetweenStations();
+      tester.testTrainsBetweenStations();
       -- tester.testSubsequentStations();
   	  -- tester.testCloseTrack();
     );
