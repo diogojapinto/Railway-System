@@ -31,6 +31,12 @@ operations
 		
 		-- add to sequence
 		trackElements := trackElements ^ [newTrackElem];
+		
+		if isofclass(Block, newTrackElem) then (
+			IO`print("Added new Block.\n")
+		) else (
+			IO`print("Added new Station.\n")
+		)
 	)
 	pre
 		len trackElements > 0 and isofclass(Station, newTrackElem) => not isofclass(Station, trackElements(len trackElements)) and
@@ -48,6 +54,7 @@ operations
 		trackElements(1).nextCounterClockwise := trackElements(len trackElements);
 		initSemaphores();
 		isClosed := true;
+		IO`print("Closed Track.\n");
 		return trackElements;
 	)
 	pre
@@ -64,6 +71,12 @@ operations
 		atomic(trainCounter := trainCounter + 1; trains := trains union {newTrain});
 		
 		trackElements(index).placeTrain(newTrain);
+		
+		IO`print("Placed train in position ");
+		IO`print(index);
+		IO`print(" in direction ");
+		IO`print(dir);
+		IO`print(".");
 		return newTrain;
 	)
 	pre
