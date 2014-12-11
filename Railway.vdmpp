@@ -201,7 +201,8 @@ operations
 		
 	private moveTrain1: Train * Station * Block ==> bool
 	moveTrain1(train, src, dst) == (
-		if dst.isSemaphoreRed(train.dir) and dst.hasAnyTrain() then
+	-- 
+		if dst.isSemaphoreRed(train.dir) or dst.hasAnyTrain() then
 			return false
 		else (
 			dst.placeTrain(train);
