@@ -40,7 +40,7 @@ operations
 		)
 		else (-- if counterClockwiseTrain = train then
 			counterClockwiseTrain := nil;
-			if nextClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
+			if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
 				setCCSemaphore(<YELLOW>)
 			else
 				setCCSemaphore(<GREEN>)

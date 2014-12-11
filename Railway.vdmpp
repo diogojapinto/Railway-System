@@ -105,7 +105,7 @@ operations
 		
 		-- verify if there is any train in the track
 		if isTrainInFollowingBlocks(train) then (
-			IO`print("Failed. Train in following block.\n");
+			IO`print("Failed. Train in following blocks.\n");
 			return false;
 		);
 		
@@ -139,7 +139,7 @@ operations
 				blocks := blocks ^ [elem];
 				elem := elem.nextClockwise;
 			);
-			return exists b in set elems blocks & b.hasCCTrain() and blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
+			return exists b in set elems blocks & b.hasCCTrain() or not blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
 		)
 		else (
 			elem := station.nextCounterClockwise;
@@ -148,7 +148,7 @@ operations
 				elem := elem.nextCounterClockwise;
 			);
 			-- verify if there is any train comming or if last block accepts the train to exit
-			return exists b in set elems blocks & b.hasCTrain() and blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
+			return exists b in set elems blocks & b.hasCTrain() or not blocks(len blocks).isSemaphoreRed(<CLOCKWISE>);
 		);
 	);
 	
@@ -205,7 +205,8 @@ operations
 		
 	private moveTrain1: Train * Station * Block ==> bool
 	moveTrain1(train, src, dst) == (
-		if dst.isSemaphoreRed(train.dir) then
+	-- verifies not only if semaphore of next block is red, but also if it is green only because we asked permission
+		if dst.isSemaphoreRed(train.dir) or dst.hasAnyTrain() then
 			return false
 		else (
 			dst.placeTrain(train);

@@ -25,12 +25,23 @@ operations
 	public removeTrain: Railway`Train ==> ()
 	removeTrain(trainVar) == (
 		train := nil;
-		if isofclass(Station, nextClockwise) or nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
+		
+		if isofclass(Station, nextClockwise) then (
+			if isofclass(Station, nextCounterClockwise) then
+				setCSemaphore(<RED>)
+			else
+				setCSemaphore(<YELLOW>);
+		) else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
 			setCSemaphore(<YELLOW>)
 		else
 			setCSemaphore(<GREEN>);
 		
-		if isofclass(Station, nextCounterClockwise) or nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
+		if isofclass(Station, nextCounterClockwise) then (
+			if isofclass(Station, nextClockwise) then
+				setCCSemaphore(<RED>)
+			else
+				setCCSemaphore(<YELLOW>);
+		) else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
 			setCCSemaphore(<YELLOW>)
 		else
 			setCCSemaphore(<GREEN>);
@@ -58,27 +69,23 @@ operations
 	
 	----- initializes all semaphores -----
 	public initSemaphores: () ==> ()
-	initSemaphores() ==
-		if hasAnyTrain() then (
-			setCSemaphore(<RED>);
-			setCCSemaphore(<RED>);
+	initSemaphores() == (
+		if isofclass(Station, nextCounterClockwise) then
+			setCSemaphore(<RED>)
+		else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) or isofclass(Station, nextClockwise) then (
+			setCSemaphore(<YELLOW>);
 		)
-		else (
-			if isofclass(Station, nextCounterClockwise) then
-				setCSemaphore(<RED>)
-			else if nextClockwise.isSemaphoreRed(<CLOCKWISE>) or isofclass(Station, nextClockwise) then (
-				setCSemaphore(<YELLOW>);
-			)
-			else
-				setCSemaphore(<GREEN>);
-		
-			if isofclass(Station, nextClockwise) then
-				setCCSemaphore(<RED>)
-			else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) or isofclass(Station, nextCounterClockwise) then
-				setCCSemaphore(<YELLOW>)
-			else 
-				setCCSemaphore(<GREEN>);
+		else
+			setCSemaphore(<GREEN>);
+					if isofclass(Station, nextClockwise) then
+			setCCSemaphore(<RED>)
+		else if nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) or isofclass(Station, nextCounterClockwise) then
+			setCCSemaphore(<YELLOW>)
+		else 
+			setCCSemaphore(<GREEN>);
 		)
+		pre
+			train = nil;
 		
 functions
 traces
