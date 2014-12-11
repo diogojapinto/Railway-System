@@ -213,12 +213,12 @@ class RailwaySystemTest is subclass of Tester
  	   	assertTrue(s2.hasAnyTrain());
    		assertTrue(railWay.askToLeaveStation(train));
    	
-   	--	assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar porque so 1 pode pedir autorizacao
+   		assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar porque so 1 pode pedir autorizacao
    	
    	  railWay.advanceIter({train,train2});
    	  
  	   	assertTrue(b4.hasAnyTrain());
- 	   -- assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar
+ 	    assertTrue(railWay.askToLeaveStation(train2)); -- e suposto falhar
  		
    	);
    	
@@ -281,9 +281,8 @@ class RailwaySystemTest is subclass of Tester
    		assertTrue(b4.hasCTrain());
    		assertTrue(s2.semaphoreClockwise = <RED>); 
    		
-   		--FAILS here because it cant advance to the next station
-   		--railWay.advanceIter({train});
-   		--assertTrue(b4.hasCTrain()); 
+   		railWay.advanceIter({train});
+   		assertTrue(b4.hasCTrain()); 
    		
    	);
    	
@@ -307,9 +306,9 @@ class RailwaySystemTest is subclass of Tester
    		railWay.advanceIter({train});
    		assertTrue(b4.hasAnyTrain());
    		assertTrue(railWay.askToLeaveStation(train2));
---  		railWay.advanceIter({train2,train}); -- ERROR HERE 
-   	--	assertTrue(s2.hasAnyTrain());
-   	--	assertTrue(b2.hasAnyTrain());
+  		railWay.advanceIter({train2,train}); -- ERROR HERE 
+   		assertTrue(s2.hasAnyTrain());
+   		assertTrue(b2.hasAnyTrain());
    	);
    	
    	-- Test "two trains in the same station ( two block per station)"
@@ -325,7 +324,6 @@ class RailwaySystemTest is subclass of Tester
    		tracks := railWay.closeTrack();  
  	
    		train := railWay.placeTrain(2, <CLOCKWISE>);
-   		--train2 := railWay.placeTrain(2, <CLOCKWISE>);  --Suposto Crashar	
    		train2 := railWay.placeTrain(2, <COUNTER_CLOCKWISE>);   		
    		
    		assertTrue(s1.hasCTrain());
@@ -343,10 +341,12 @@ class RailwaySystemTest is subclass of Tester
       tester.testTrainPlacement();
       tester.testPermissionToLeave();
       tester.testIterTwoTrains();
-      tester.testTrainsBetweenStations();
       tester.testStopsAtRed();
       tester.twoTrainsInStation();
       tester.PermissionNotGranted();
+      
+      
+      -- tester.testTrainsBetweenStations();
     );
     
 end RailwaySystemTest
