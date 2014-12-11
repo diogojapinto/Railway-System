@@ -211,18 +211,18 @@ class RailwaySystemTest is subclass of Tester
  	   	assertTrue(s2.hasAnyTrain());
    		assertTrue(railWay.askToLeaveStation(train));
    	
-   		assertFalse(railWay.askToLeaveStation(train2)); -- e suposto falhar porque so 1 pode pedir autorizacao
+   		assertFalse(railWay.askToLeaveStation(train2)); 
    	
-   	  --railWay.advanceIter({train,train2});
+   	  railWay.advanceIter({train,train2});
    	  
- 	   	--assertTrue(b4.hasCTrain());
+ 	   	assertTrue(b4.hasCTrain());
  	   	
- 	    --assertFalse(railWay.askToLeaveStation(train2)); -- e suposto falhar
+ 	    assertFalse(railWay.askToLeaveStation(train2));
 
  		
    	);
    	
-   	 ----- Test "Two trains in the track advancing an iteration, in two different directions ERROR!!!!!!!!!!!!" -----	
+   	 ----- Test "Two trains in the track advancing an iteration, in two different directions
    	  testIterTwoTrains() ==
    	(
    		dcl tracks: seq of TrackElement;
@@ -253,6 +253,47 @@ class RailwaySystemTest is subclass of Tester
  		
    	);
    	
+   	 ----- Test "Two trains in the track advancing an iteration, in two different directions
+   	  test2TrainsRow() ==
+   	(
+   		dcl tracks: seq of TrackElement;
+   		
+   		restartVariables();
+   		
+   		railWay.appendTrackElement(b1);
+   		railWay.appendTrackElement(s3);
+   		railWay.appendTrackElement(b2);
+   		railWay.appendTrackElement(s1);
+   		railWay.appendTrackElement(b4);
+   		railWay.appendTrackElement(b3);
+   		tracks := railWay.closeTrack();
+   		
+   		train := railWay.placeTrain(2, <CLOCKWISE>);
+   		train2 := railWay.placeTrain(4, <CLOCKWISE>);   		
+   		
+ 	   	assertTrue(s3.hasAnyTrain());
+ 	   	assertTrue(s1.hasAnyTrain());
+   		assertTrue(railWay.askToLeaveStation(train));
+  	
+   		railWay.advanceIter({train,train2});
+ 	   	assertTrue(b2.hasAnyTrain());
+ 	   	assertTrue(railWay.askToLeaveStation(train2));
+ 	   	
+ 	   	railWay.advanceIter({train,train2});
+ 	   	
+ 	   	assertTrue(s1.hasAnyTrain());
+ 	   	assertTrue(b4.hasAnyTrain());
+ 	   	
+ 	   	assertTrue(railWay.askToLeaveStation(train));
+ 	   	
+ 	   	railWay.advanceIter({train,train2});
+ 	   	-- O semaforo esta verde porque se o comboio da frente andar, ele tambem vai poder andar
+ 	   	-- logo o askto leave station tem de pintar
+ 	   	
+ 	   	assertTrue(b4.hasAnyTrain());
+ 	   	assertTrue(b3.hasAnyTrain());
+ 		
+   	);
    	 ----- Test "Semaphores is red before entering a station where is a train there already " -----	
   	 	testStopsAtRed() ==
    	(
@@ -345,7 +386,7 @@ class RailwaySystemTest is subclass of Tester
       tester.testStopsAtRed();
       tester.twoTrainsInStation();
       tester.PermissionNotGranted();
-      
+      tester.test2TrainsRow();
       
       ------------------------------------------------------
       -- Uncomment a test call, one by one, to prove failure
