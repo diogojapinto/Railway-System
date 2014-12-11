@@ -1,239 +1,233 @@
 class Railway
 types
-	public Direction = <CLOCKWISE> | <COUNTER_CLOCKWISE>;
-	public Train :: id          : token
-									dir         : Direction;
+        public Direction = <CLOCKWISE> | <COUNTER_CLOCKWISE>;
+        public Train :: id          : token
+                                                                        dir         : Direction;
 values
 instance variables
 	public trainCounter: nat := 0;
-	
-	private isClosed: bool := false;
-	
-	public trackElements: seq of TrackElement := [];
-	public trains: set of Train := {};
-	
-	------------COULD NOT IMPLEMENT------------
-	 inv trainCounter = card trains;
+  private isClosed: bool := false;
+       
+  public trackElements: seq of TrackElement := [];
+  public trains: set of Train := {};
+       
+  ------------COULD NOT IMPLEMENT------------
+  inv trainCounter = card trains;
 operations
-
-	--------------------
-	--   Build ops    --
-	--------------------
-	
-	----- adds an element to the end of the current track -----
-	public appendTrackElement: TrackElement ==> ()
-	appendTrackElement(newTrackElem) == (
-		if len trackElements > 0 then (
-			-- set elements ordering
-			newTrackElem.nextCounterClockwise := trackElements(len trackElements);
-			trackElements(len trackElements).nextClockwise := newTrackElem;
-		);
-		
-		-- add to sequence
-		trackElements := trackElements ^ [newTrackElem];
-		
-		if isofclass(Block, newTrackElem) then (
-			IO`print("Added new Block.\n")
-		) else (
-			IO`print("Added new Station.\n")
-		)
-	)
-	pre
-		len trackElements > 0 and isofclass(Station, newTrackElem) => not isofclass(Station, trackElements(len trackElements)) and
-		isClosed = false
-	post
-		len trackElements = (len trackElements~ + 1) and
-		len trackElements > 1 => trackElements(len trackElements - 1).nextClockwise = trackElements(len trackElements) and
-		len trackElements > 1 => trackElements(len trackElements).nextCounterClockwise = trackElements(len trackElements - 1);
-		
-	
-	----- terminates the construction of the track -----
-	public closeTrack: () ==> seq of TrackElement
-	closeTrack() == (
-		trackElements(len trackElements).nextClockwise := trackElements(1);
-		trackElements(1).nextCounterClockwise := trackElements(len trackElements);
-		initSemaphores();
-		isClosed := true;
-		IO`print("Closed Track.\n");
-		return trackElements;
-	)
-	pre
-		isClosed = false
-	post
-		trackElements(1).nextCounterClockwise = trackElements(len trackElements) and
-		trackElements(len trackElements).nextClockwise = trackElements(1);
-	
-	-- Places a new train in a station
-	public placeTrain: nat * Direction ==> Train
-	placeTrain(index, dir) == (
-		dcl newTrain: Train := mk_Train(mk_token(trainCounter), dir);
-		
-		atomic(trainCounter := trainCounter + 1; trains := trains union {newTrain});
-		
-		trackElements(index).placeTrain(newTrain);
-		
-		IO`print("Placed new train in position ");
-		IO`print(index);
-		IO`print(" in direction ");
-		IO`print(dir);
-		IO`print(".\n");
-		return newTrain;
-	)
-	pre
-		isofclass(Station, trackElements(index));
-	
-	
-	----- initializes all semaphores -----
-	private initSemaphores: () ==> ()
-	initSemaphores() == (
-		for all elem in set {b | b in set elems trackElements & isofclass(Block, b)} do (
-			elem.initSemaphores()
-		);
-		for all elem in set {s | s in set elems trackElements & isofclass(Station, s)} do (
-			elem.initSemaphores()
-		);
-	)
-	pre isClosed = false;
-	
-	----- initializes all semaphores -----
-	public askToLeaveStation: Train ==> bool
-	askToLeaveStation(train) == (
-		dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
-		IO`print("Train ");
-		IO`print(train.id);
-		IO`print(" asking to leave station.\n");
-		
-		-- verify if there is any train in the track
-		if isTrainInFollowingBlocks(train) then (
-			IO`print("Failed. Train in following blocks.\n");
-			return false;
-		);
-		
-		if train.dir = <CLOCKWISE> then (
-			if station.nextClockwise.nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
-				station.nextClockwise.setCSemaphore(<YELLOW>)
-			else
-				station.nextClockwise.setCSemaphore(<GREEN>)
-		)
-		else (
-			if station.nextCounterClockwise.nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
-				station.nextCounterClockwise.setCCSemaphore(<YELLOW>)
-			else
-				station.nextCounterClockwise.setCCSemaphore(<GREEN>)
-		);
-		IO`print("Success. Semaphores changed.\n");
-		return true;
-	);
-	------------COULD NOT IMPLEMENT------------
-	--pre
-	--	exists1 s in set elems trackElements & isofclass(Station, s) and s.hasTrain(train);
-	
-	private isTrainInFollowingBlocks: Train ==> bool
-	isTrainInFollowingBlocks(train) == (
-		dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
-		dcl blocks: seq of TrackElement := [];
-		dcl elem: TrackElement;
-		if train.dir = <CLOCKWISE> then (
-			elem := station.nextClockwise;
-			while isofclass(Block, elem) do (
-				blocks := blocks ^ [elem];
-				elem := elem.nextClockwise;
-			);
-			return exists b in set elems blocks & b.hasCCTrain() or not blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
-		)
-		else (
-			elem := station.nextCounterClockwise;
-			while isofclass(Block, elem) do (
-				blocks := blocks ^ [elem];
-				elem := elem.nextCounterClockwise;
-			);
-			-- verify if there is any train comming or if last block accepts the train to exit
-			return exists b in set elems blocks & b.hasCTrain() or not blocks(len blocks).isSemaphoreRed(<CLOCKWISE>);
-		);
-	);
-	
-	----- Advances one iteration all trains. Advances first all trains that can move, and then try to move all train that wouldn't move at the first time -----
-	public advanceIter: set of Train ==> ()
-	advanceIter(mvTrains) == (
-		dcl movedTrains: set of Train := {};
-		for all train in set mvTrains do (
-			dcl srcElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
-			dcl dstElem: TrackElement;
-			dcl dummy: bool;
-			if train.dir = <CLOCKWISE> then (
-					dstElem := srcElem.nextClockwise;
-			)
-			else (
-				dstElem := srcElem.nextCounterClockwise;
-			);
-			
-			if isofclass(Station, srcElem) then (
-				if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) then (
-					dummy := moveTrain(train, srcElem, dstElem);
-					IO`print("Moved train ");
-					IO`print(train.id);
-					IO`print(".\n");
-				)
-				else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) then (
-					dummy := moveTrain(train, srcElem, dstElem);
-					IO`print("Moved train ");
-					IO`print(train.id);
-					IO`print(".\n");
-				);
-				movedTrains:= movedTrains union {train};
-			)
-			else (
-				if moveTrain(train, srcElem, dstElem) then
-					movedTrains:= movedTrains union {train}
-			)
-		);
-		if card movedTrains = 0 then
-			return
-		else
-			advanceIter(mvTrains \ movedTrains);
-	)
-	pre
-		isClosed;
-		
-	private moveTrain: Train * TrackElement * TrackElement ==> bool
-	moveTrain(train, src, dst) == 
-		if isofclass(Station, src) then
-			moveTrain1(train, src, dst)
-		else
-			moveTrain2(train, src, dst);
-	
-		
-	private moveTrain1: Train * Station * Block ==> bool
-	moveTrain1(train, src, dst) == (
-	-- verifies not only if semaphore of next block is red, but also if it is green only because we asked permission
-		if dst.isSemaphoreRed(train.dir) or dst.hasAnyTrain() then
-			return false
-		else (
-			dst.placeTrain(train);
-			src.removeTrain(train);
-			return true;
-		)
-	)
-	pre
-		train.dir = <CLOCKWISE> => src.clockwiseTrain = train and src.nextClockwise = dst and
-		train.dir = <COUNTER_CLOCKWISE> => src.counterClockwiseTrain = train and src.nextCounterClockwise = dst;
-		
-	private moveTrain2: Train * Block * TrackElement ==> bool
-	moveTrain2(train, src, dst) == (
-		if dst.isSemaphoreRed(train.dir) then
-			return false
-		else (
-		  dst.placeTrain(train);
-		  src.removeTrain(train);
-		  return true;
-		)
-	)
-	pre
-		src.train = train and
-		train.dir = <CLOCKWISE> => src.nextClockwise = dst and
-		train.dir = <COUNTER_CLOCKWISE> => src.nextCounterClockwise = dst;
-	
+ 
+  --------------------
+  --   Build ops    --
+  --------------------
+       
+  ----- adds an element to the end of the current track -----
+  public appendTrackElement: TrackElement ==> ()
+  appendTrackElement(newTrackElem) == (
+  	if len trackElements > 0 then (
+      -- set elements ordering
+      newTrackElem.nextCounterClockwise := trackElements(len trackElements);
+      trackElements(len trackElements).nextClockwise := newTrackElem;
+    );
+               
+    -- add to sequence
+    trackElements := trackElements ^ [newTrackElem];
+               
+    if isofclass(Block, newTrackElem) then (
+      IO`print("Added new Block.\n")
+    ) else (
+      IO`print("Added new Station.\n")
+    )
+  )
+  pre
+    len trackElements > 0 and isofclass(Station, newTrackElem) => not isofclass(Station, trackElements(len trackElements)) and
+    isClosed = false
+  post
+    len trackElements = (len trackElements~ + 1) and
+    len trackElements > 1 => trackElements(len trackElements - 1).nextClockwise = trackElements(len trackElements) and
+    len trackElements > 1 => trackElements(len trackElements).nextCounterClockwise = trackElements(len trackElements - 1);
+               
+       
+  ----- terminates the construction of the track -----
+  public closeTrack: () ==> seq of TrackElement
+    closeTrack() == (
+      trackElements(len trackElements).nextClockwise := trackElements(1);
+      trackElements(1).nextCounterClockwise := trackElements(len trackElements);
+      initSemaphores();
+      isClosed := true;
+      IO`print("Closed Track.\n");
+      return trackElements;
+    )
+    pre
+      isClosed = false
+    post
+      trackElements(1).nextCounterClockwise = trackElements(len trackElements) and
+      trackElements(len trackElements).nextClockwise = trackElements(1);
+       
+  -- Places a new train in a station
+  public placeTrain: nat * Direction ==> Train
+  placeTrain(index, dir) == (
+    dcl newTrain: Train := mk_Train(mk_token(trainCounter), dir);
+               
+    atomic(trainCounter := trainCounter + 1; trains := trains union {newTrain});
+               
+    trackElements(index).placeTrain(newTrain);
+               
+    IO`print("Placed new train in position ");
+    IO`print(index);
+    IO`print(" in direction ");
+    IO`print(dir);
+    IO`print(".");
+    IO`print(".\n");
+    return newTrain;
+  )
+  pre
+    isofclass(Station, trackElements(index));
+       
+       
+  ----- initializes all semaphores -----
+  private initSemaphores: () ==> ()
+    initSemaphores() == (
+      for all elem in set {b | b in set elems trackElements & isofclass(Block, b)} do (
+        elem.initSemaphores()
+      );
+      for all elem in set {s | s in set elems trackElements & isofclass(Station, s)} do (
+        elem.initSemaphores()
+      );
+  )
+  pre isClosed = false;
+       
+  ----- initializes all semaphores -----
+  public askToLeaveStation: Train ==> bool
+  askToLeaveStation(train) == (
+    dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
+    IO`print("Train ");
+    IO`print(train.id);
+    IO`print(" asking to leave station.\n");
+               
+    -- verify if there is any train in the track
+    if isTrainInFollowingBlocks(train) then (
+      IO`print("Failed. Train in following blocks.\n");
+      return false;
+    );
+               
+    if train.dir = <CLOCKWISE> then (
+      if station.nextClockwise.nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
+        station.nextClockwise.setCSemaphore(<YELLOW>)
+      else
+        station.nextClockwise.setCSemaphore(<GREEN>)
+    )
+    else (
+      if station.nextCounterClockwise.nextCounterClockwise.isSemaphoreRed(<COUNTER_CLOCKWISE>) then
+        station.nextCounterClockwise.setCCSemaphore(<YELLOW>)
+      else
+        station.nextCounterClockwise.setCCSemaphore(<GREEN>)
+    );
+    IO`print("Success. Semaphores changed.\n");
+    return true;
+  );
+  ------------COULD NOT IMPLEMENT------------
+  --pre
+  --      exists1 s in set elems trackElements & isofclass(Station, s) and s.hasTrain(train);
+       
+  private isTrainInFollowingBlocks: Train ==> bool
+    isTrainInFollowingBlocks(train) == (
+      dcl station: Station := iota s in set elems trackElements & s.hasTrain(train);
+      dcl blocks: seq of TrackElement := [];
+      dcl elem: TrackElement;
+      if train.dir = <CLOCKWISE> then (
+        elem := station.nextClockwise;
+        while isofclass(Block, elem) do (
+          blocks := blocks ^ [elem];
+          elem := elem.nextClockwise;
+        );
+        return exists b in set elems blocks & b.hasCCTrain() or not blocks(len blocks).isSemaphoreRed(<COUNTER_CLOCKWISE>);
+      )
+      else (
+        elem := station.nextCounterClockwise;
+        while isofclass(Block, elem) do (
+          blocks := blocks ^ [elem];
+          elem := elem.nextCounterClockwise;
+        );
+        -- verify if there is any train comming or if last block accepts the train to exit
+        return exists b in set elems blocks & b.hasCTrain() or not blocks(len blocks).isSemaphoreRed(<CLOCKWISE>);
+      );
+    );
+       
+  ----- Advances one iteration all trains. Advances first all trains that can move, and then try to move all train that wouldn't move at the first time -----
+  public advanceIter: set of Train ==> ()
+    advanceIter(mvTrains) == (
+      dcl movedTrains: set of Train := {};
+        for all train in set mvTrains do (
+          dcl srcElem: TrackElement := iota e in set elems trackElements & e.hasTrain(train);
+          dcl dstElem: TrackElement;
+          dcl dummy: bool;
+          if train.dir = <CLOCKWISE> then (
+            dstElem := srcElem.nextClockwise;
+          )
+          else (
+            dstElem := srcElem.nextCounterClockwise;
+          );
+                       
+          if moveTrain(train, srcElem, dstElem) then
+            movedTrains:= movedTrains union {train}
+                       
+          --if isofclass(Station, srcElem) then (
+          --  if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) and not dstElem.hasAnyTrain() then
+          --    dummy := moveTrain(train, srcElem, dstElem)
+          --  else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) and not dstElem.hasAnyTrain() then
+          --    dummy := moveTrain(train, srcElem, dstElem);
+          --    movedTrains:= movedTrains union {train}
+          --  )
+          --else (
+          --  if moveTrain(train, srcElem, dstElem) then
+          --    movedTrains:= movedTrains union {train}
+          --)
+          );
+          if card movedTrains = 0 then
+            return
+          else
+            advanceIter(mvTrains \ movedTrains);
+    )
+    pre
+      isClosed;
+               
+  private moveTrain: Train * TrackElement * TrackElement ==> bool
+    moveTrain(train, src, dst) ==
+    if isofclass(Station, src) then
+      moveTrain1(train, src, dst)
+    else
+      moveTrain2(train, src, dst);
+       
+               
+  private moveTrain1: Train * Station * Block ==> bool
+    moveTrain1(train, src, dst) == (
+      if dst.isSemaphoreRed(train.dir) or dst.hasAnyTrain() then
+        return false
+      else (
+        dst.placeTrain(train);
+        src.removeTrain(train);
+        return true;
+      )
+    )
+    pre
+      train.dir = <CLOCKWISE> => src.clockwiseTrain = train and src.nextClockwise = dst and
+      train.dir = <COUNTER_CLOCKWISE> => src.counterClockwiseTrain = train and src.nextCounterClockwise = dst;
+               
+  private moveTrain2: Train * Block * TrackElement ==> bool
+    moveTrain2(train, src, dst) == (
+      if dst.isSemaphoreRed(train.dir) then
+        return false
+      else (
+        dst.placeTrain(train);
+        src.removeTrain(train);
+        return true;
+      )
+    )
+    pre
+      src.train = train and
+      train.dir = <CLOCKWISE> => src.nextClockwise = dst and
+      train.dir = <COUNTER_CLOCKWISE> => src.nextCounterClockwise = dst;
+       
 functions
-	
+       
 traces
 end Railway
