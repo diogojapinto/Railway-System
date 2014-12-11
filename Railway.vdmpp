@@ -76,7 +76,6 @@ operations
 		IO`print(index);
 		IO`print(" in direction ");
 		IO`print(dir);
-		IO`print(".");
 		IO`print(".\n");
 		return newTrain;
 	)
@@ -105,9 +104,10 @@ operations
 		IO`print(" asking to leave station.\n");
 		
 		-- verify if there is any train in the track
-		if isTrainInFollowingBlocks(train) then
-		IO`print("Failed. Train in following block.\n");
+		if isTrainInFollowingBlocks(train) then (
+			IO`print("Failed. Train in following block.\n");
 			return false;
+		);
 		
 		if train.dir = <CLOCKWISE> then (
 			if station.nextClockwise.nextClockwise.isSemaphoreRed(<CLOCKWISE>) then
@@ -168,11 +168,19 @@ operations
 			);
 			
 			if isofclass(Station, srcElem) then (
-				if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) then
-					dummy := moveTrain(train, srcElem, dstElem)
-				else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) then
+				if train.dir = <CLOCKWISE> and (dstElem.semaphoreClockwise = <GREEN> or dstElem.semaphoreClockwise = <YELLOW>) then (
 					dummy := moveTrain(train, srcElem, dstElem);
-				movedTrains:= movedTrains union {train}
+					IO`print("Moved train ");
+					IO`print(train.id);
+					IO`print(".\n");
+				)
+				else if train.dir = <COUNTER_CLOCKWISE> and (dstElem.semaphoreCounterClockwise = <GREEN> or dstElem.semaphoreCounterClockwise = <YELLOW>) then (
+					dummy := moveTrain(train, srcElem, dstElem);
+					IO`print("Moved train ");
+					IO`print(train.id);
+					IO`print(".\n");
+				);
+				movedTrains:= movedTrains union {train};
 			)
 			else (
 				if moveTrain(train, srcElem, dstElem) then
